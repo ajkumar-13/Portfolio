@@ -47,70 +47,76 @@
 
 /* ========================================
    DARK THEME (Default)
-   AI-inspired with deep blues and purples
+   Warm, sophisticated dark with cream accents
    ======================================== */
 [data-theme="dark"] {
-  /* Background colors */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-tertiary: #1a1a25;
-  --bg-card: linear-gradient(135deg, rgba(20, 20, 35, 0.8), rgba(15, 15, 25, 0.9));
-  --bg-glass: rgba(20, 20, 35, 0.7);
+  /* Background colors - warm dark tones */
+  --bg-primary: #1a1815;
+  --bg-secondary: #232019;
+  --bg-tertiary: #2d2a24;
+  --bg-card: linear-gradient(135deg, rgba(35, 32, 25, 0.9), rgba(26, 24, 21, 0.95));
+  --bg-glass: rgba(35, 32, 25, 0.8);
 
-  /* Text colors */
-  --text-primary: #f0f0f5;
-  --text-secondary: #a0a0b0;
-  --text-muted: #6b6b80;
+  /* Text colors - warm whites */
+  --text-primary: #f5f0e8;
+  --text-secondary: #c4baa8;
+  --text-muted: #8a8275;
 
-  /* Accent colors - AI-inspired gradient */
-  --accent-primary: #6366f1;
-  --accent-secondary: #8b5cf6;
-  --accent-tertiary: #06b6d4;
-  --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
-  --gradient-text: linear-gradient(135deg, #818cf8, #c084fc, #22d3ee);
-  --gradient-glow: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.4));
+  /* Accent colors - warm cream/gold */
+  --accent-primary: #dfd1bc;
+  --accent-secondary: #c4a77d;
+  --accent-tertiary: #e8c47c;
+  --gradient-primary: linear-gradient(135deg, #dfd1bc, #c4a77d, #e8c47c);
+  --gradient-text: linear-gradient(135deg, #f5e6d3, #dfd1bc, #c4a77d);
+  --gradient-glow: linear-gradient(135deg, rgba(223, 209, 188, 0.15), rgba(196, 167, 125, 0.15));
 
   /* Border colors */
-  --border-primary: rgba(99, 102, 241, 0.2);
+  --border-primary: rgba(223, 209, 188, 0.3);
   --border-secondary: rgba(255, 255, 255, 0.08);
 
   /* Special effects */
-  --neural-line: rgba(99, 102, 241, 0.3);
-  --glow-color: rgba(99, 102, 241, 0.5);
+  --neural-line: rgba(223, 209, 188, 0.2);
+  --glow-color: rgba(223, 209, 188, 0.25);
+
+  /* Shadows */
+  --shadow-glow: 0 0 40px rgba(223, 209, 188, 0.15);
 }
 
 /* ========================================
    LIGHT THEME
-   Clean, professional with subtle AI hints
+   Warm cream/beige with dark accents
    ======================================== */
 [data-theme="light"] {
-  /* Background colors */
-  --bg-primary: #fafbff;
+  /* Background colors - warm cream tones */
+  --bg-primary: #f8f4ef;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #f0f2f8;
-  --bg-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 255, 0.95));
-  --bg-glass: rgba(255, 255, 255, 0.8);
+  --bg-tertiary: #efe9e0;
+  --bg-card: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 244, 239, 0.98));
+  --bg-glass: rgba(255, 255, 255, 0.85);
 
-  /* Text colors */
-  --text-primary: #1a1a2e;
-  --text-secondary: #4a4a6a;
-  --text-muted: #8888a0;
+  /* Text colors - warm dark tones */
+  --text-primary: #2d2a24;
+  --text-secondary: #5c564a;
+  --text-muted: #8a8275;
 
-  /* Accent colors */
-  --accent-primary: #4f46e5;
-  --accent-secondary: #7c3aed;
-  --accent-tertiary: #0891b2;
-  --gradient-primary: linear-gradient(135deg, #4f46e5, #7c3aed, #0891b2);
-  --gradient-text: linear-gradient(135deg, #4f46e5, #7c3aed, #0891b2);
-  --gradient-glow: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(124, 58, 237, 0.2));
+  /* Accent colors - warm brown/gold */
+  --accent-primary: #8b7355;
+  --accent-secondary: #6b5a45;
+  --accent-tertiary: #a68a5b;
+  --gradient-primary: linear-gradient(135deg, #8b7355, #6b5a45, #a68a5b);
+  --gradient-text: linear-gradient(135deg, #6b5a45, #8b7355, #a68a5b);
+  --gradient-glow: linear-gradient(135deg, rgba(139, 115, 85, 0.1), rgba(107, 90, 69, 0.1));
 
   /* Border colors */
-  --border-primary: rgba(79, 70, 229, 0.3);
-  --border-secondary: rgba(0, 0, 0, 0.08);
+  --border-primary: rgba(139, 115, 85, 0.4);
+  --border-secondary: rgba(0, 0, 0, 0.06);
 
   /* Special effects */
-  --neural-line: rgba(79, 70, 229, 0.2);
-  --glow-color: rgba(79, 70, 229, 0.3);
+  --neural-line: rgba(139, 115, 85, 0.15);
+  --glow-color: rgba(139, 115, 85, 0.2);
+
+  /* Shadows */
+  --shadow-glow: 0 0 40px rgba(139, 115, 85, 0.1);
 }
 
 /* ========================================
