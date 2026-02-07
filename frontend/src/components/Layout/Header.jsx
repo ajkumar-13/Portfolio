@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
 import styles from '../../styles/components.module.css';
+import SettingsDock from '../SettingsDock';
 
 /**
  * Header Component
@@ -11,7 +11,6 @@ import styles from '../../styles/components.module.css';
  */
 const Header = () => {
     const location = useLocation();
-    const { toggleTheme, isDark } = useTheme();
 
     const isActive = (path) => location.pathname === path;
 
@@ -45,18 +44,8 @@ const Header = () => {
                     </Link>
                 </nav>
 
-                {/* Right side buttons */}
-                <div className={styles.headerButtons}>
-                    {/* Theme Toggle Button */}
-                    <button
-                        className={styles.themeToggle}
-                        onClick={toggleTheme}
-                        aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                        title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                    >
-                        {isDark ? '☀️' : '🌙'}
-                    </button>
-                </div>
+                {/* Settings Dock (Replaces old Theme Toggle) */}
+                <SettingsDock />
             </div>
         </header>
     );
