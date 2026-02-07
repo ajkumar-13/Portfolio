@@ -1,0 +1,214 @@
+/* ========================================
+   MARKDOWN CONTENT STYLES
+   Beautiful styling for rendered blog content
+   ======================================== */
+
+.markdown-content {
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+/* Headings */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.markdown-content h1 {
+    font-size: 2.25rem;
+}
+
+.markdown-content h2 {
+    font-size: 1.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-secondary);
+}
+
+.markdown-content h3 {
+    font-size: 1.4rem;
+}
+
+.markdown-content h4 {
+    font-size: 1.2rem;
+}
+
+/* Paragraphs */
+.markdown-content p {
+    margin-bottom: 1.5rem;
+}
+
+/* Links */
+.markdown-content a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.markdown-content a:hover {
+    border-bottom-color: var(--accent-primary);
+}
+
+/* Lists */
+.markdown-content ul,
+.markdown-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.markdown-content li {
+    margin-bottom: 0.5rem;
+}
+
+.markdown-content li::marker {
+    color: var(--accent-primary);
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    background: var(--bg-tertiary);
+    border-left: 4px solid var(--accent-primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Code - Inline */
+.markdown-content code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    color: var(--accent-tertiary);
+}
+
+/* Code - Blocks */
+.markdown-content pre {
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+}
+
+.markdown-content pre code {
+    padding: 0;
+    background: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 2rem 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-secondary);
+}
+
+/* Tables */
+.markdown-content table {
+    width: 100%;
+    margin: 1.5rem 0;
+    border-collapse: collapse;
+}
+
+.markdown-content th,
+.markdown-content td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: 1px solid var(--border-secondary);
+}
+
+.markdown-content th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+}
+
+.markdown-content tr:nth-child(even) {
+    background: var(--bg-tertiary);
+}
+
+/* Horizontal Rule */
+.markdown-content hr {
+    margin: 2.5rem 0;
+    border: none;
+    height: 1px;
+    background: var(--gradient-primary);
+    opacity: 0.3;
+}
+
+/* Strong & Emphasis */
+.markdown-content strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.markdown-content em {
+    font-style: italic;
+}
+
+/* ========================================
+   SYNTAX HIGHLIGHTING (Highlight.js)
+   ======================================== */
+.hljs {
+    background: transparent !important;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+    color: #c792ea;
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-addition {
+    color: #c3e88d;
+}
+
+.hljs-comment,
+.hljs-deletion,
+.hljs-meta {
+    color: #6a737d;
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-quote,
+.hljs-link {
+    color: #f78c6c;
+}
+
+.hljs-params,
+.hljs-variable {
+    color: #89ddff;
+}
+
+.hljs-function {
+    color: #82aaff;
+}

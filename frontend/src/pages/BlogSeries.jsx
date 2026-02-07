@@ -3,6 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import styles from '../styles/components.module.css';
 
+/**
+ * BlogSeries Page Component
+ * 
+ * Displays a blog series with all its articles listed.
+ */
 const BlogSeries = () => {
     const { id } = useParams();
     const [series, setSeries] = useState(null);
@@ -25,57 +30,99 @@ const BlogSeries = () => {
         fetchSeries();
     }, [id]);
 
-    if (loading) return <div className="container">Loading...</div>;
-    if (error) return <div className="container">Error: {error}</div>;
-    if (!series) return <div className="container">Series not found</div>;
+    if (loading) {
+        return (
+            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
+                <p style={{ color: 'var(--text-secondary)' }}>Loading series...</p>
+            </div>
+        );
+    }
+
+    if (error || !series) {
+        return (
+            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
+                <p style={{ color: 'var(--text-secondary)' }}>{error || 'Series not found'}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="container">
-            <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{series.title}</h1>
-                <p style={{ fontSize: '1.2rem', color: 'var(--color-text-secondary)' }}>
+            {/* Series Header */}
+            <div className={styles.sectionHeader} style={{ paddingTop: '2rem' }}>
+                <Link to="/blogs" style={{
+                    color: 'var(--text-muted)',
+                    fontSize: '0.9rem',
+                    marginBottom: '1rem',
+                    display: 'inline-block'
+                }}>
+                    ← Back to all series
+                </Link>
+                <h1 className={styles.sectionTitle}>
+                    <span className="gradient-text">{series.title}</span>
+                </h1>
+                <p className={styles.sectionDescription}>
                     {series.description}
                 </p>
             </div>
 
-            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                {series.blogs && series.blogs.map((blog, index) => (
-                    <Link
-                        key={blog.id}
-                        to={`/blogs/${blog.slug}`}
-                        style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}
-                    >
-                        <div style={{
-                            display: 'flex',
-                            gap: '2rem',
-                            marginBottom: '2rem',
-                            padding: '1.5rem',
-                            background: 'var(--color-surface)',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: 'var(--radius-lg)',
-                            alignItems: 'center',
-                            transition: 'transform 0.2s'
-                        }}
-                            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            {/* Articles List */}
+            <div style={{ maxWidth: '800px', margin: '2rem auto 4rem' }}>
+                {series.blogs && series.blogs.length > 0 ? (
+                    series.blogs.map((blog, index) => (
+                        <Link
+                            key={blog.id}
+                            to={`/blogs/${blog.slug}`}
+                            style={{ textDecoration: 'none' }}
                         >
-                            <div style={{
-                                fontSize: '2rem',
-                                fontWeight: 'bold',
-                                color: 'var(--color-text-secondary)',
-                                opacity: 0.3
-                            }}>
-                                {(index + 1).toString().padStart(2, '0')}
-                            </div>
-                            <div>
-                                <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{blog.title}</h2>
-                                <p style={{ color: 'var(--color-text-secondary)' }}>{blog.excerpt}</p>
-                            </div>
-                        </div>
-                    </Link>
-                ))}
-                {(!series.blogs || series.blogs.length === 0) && (
-                    <p style={{ textAlign: 'center' }}>No blogs in this series yet.</p>
+                            <article
+                                className={styles.card}
+                                style={{
+                                    marginBottom: '1.5rem',
+                                    display: 'flex',
+                                    alignItems: 'stretch'
+                                }}
+                            >
+                                {/* Order Number */}
+                                <div style={{
+                                    width: '80px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: 'var(--gradient-glow)',
+                                    borderRight: '1px solid var(--border-secondary)',
+                                    fontSize: '1.5rem',
+                                    fontWeight: '700',
+                                    color: 'var(--text-muted)',
+                                    flexShrink: 0
+                                }}>
+                                    {(index + 1).toString().padStart(2, '0')}
+                                </div>
+
+                                {/* Content */}
+                                <div className={styles.cardContent} style={{ flex: 1 }}>
+                                    <h2 className={styles.cardTitle}>{blog.title}</h2>
+                                    <p className={styles.cardExcerpt}>{blog.excerpt}</p>
+                                    <span style={{
+                                        color: 'var(--accent-primary)',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '500'
+                                    }}>
+                                        Read article →
+                                    </span>
+                                </div>
+                            </article>
+                        </Link>
+                    ))
+                ) : (
+                    <div className="glass-card" style={{
+                        textAlign: 'center',
+                        padding: '3rem'
+                    }}>
+                        <p style={{ color: 'var(--text-secondary)' }}>
+                            No articles in this series yet.
+                        </p>
+                    </div>
                 )}
             </div>
         </div>
