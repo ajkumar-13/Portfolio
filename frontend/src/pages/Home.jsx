@@ -1,22 +1,49 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import styles from '../styles/components.module.css';
 
 /**
  * Home Page Component
  * 
- * The landing page featuring:
- * - Hero section with AI-themed introduction
- * - Animated background effects
- * - Call-to-action buttons
- * 
- * This is the first thing visitors see!
+ * Retro-styled landing page with:
+ * - Typewriter effect for the tagline
+ * - Terminal/ASCII art aesthetic
+ * - Minimal but nostalgic feel
  */
 const Home = () => {
+    // Typewriter effect state
+    const [displayText, setDisplayText] = useState('');
+    const [showCursor, setShowCursor] = useState(true);
+    const fullText = 'Building intelligent systems.';
+
+    // Typewriter animation
+    useEffect(() => {
+        let index = 0;
+        const timer = setInterval(() => {
+            if (index < fullText.length) {
+                setDisplayText(fullText.slice(0, index + 1));
+                index++;
+            } else {
+                clearInterval(timer);
+            }
+        }, 80);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    // Blinking cursor
+    useEffect(() => {
+        const cursorTimer = setInterval(() => {
+            setShowCursor(prev => !prev);
+        }, 530);
+        return () => clearInterval(cursorTimer);
+    }, []);
+
     return (
         <div className="container">
             {/* Hero Section */}
             <section style={{
-                minHeight: '85vh',
+                minHeight: '90vh',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -24,117 +51,152 @@ const Home = () => {
                 textAlign: 'center',
                 position: 'relative'
             }}>
-                {/* AI Badge */}
-                <div className={styles.sectionLabel}>
-                    🤖 AI / ML Engineer & Developer
+                {/* Retro Terminal Box */}
+                <div style={{
+                    padding: '3rem 4rem',
+                    border: '2px solid var(--border-primary)',
+                    borderRadius: '4px',
+                    background: 'var(--bg-glass)',
+                    backdropFilter: 'blur(10px)',
+                    position: 'relative',
+                    maxWidth: '600px'
+                }}>
+                    {/* Terminal Header Dots */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '12px',
+                        left: '16px',
+                        display: 'flex',
+                        gap: '6px'
+                    }}>
+                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#c4a77d', opacity: 0.6 }}></span>
+                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#c4a77d', opacity: 0.4 }}></span>
+                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#c4a77d', opacity: 0.2 }}></span>
+                    </div>
+
+                    {/* Greeting */}
+                    <p style={{
+                        fontFamily: 'monospace',
+                        fontSize: '0.9rem',
+                        color: 'var(--text-muted)',
+                        marginBottom: '1rem',
+                        letterSpacing: '0.15em'
+                    }}>
+                        {'>'} HELLO, WORLD
+                    </p>
+
+                    {/* Name */}
+                    <h1 style={{
+                        fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+                        fontWeight: '800',
+                        marginBottom: '0.75rem',
+                        lineHeight: 1.1,
+                        letterSpacing: '-0.02em'
+                    }}>
+                        <span className="gradient-text">Ajay Kumar</span>
+                    </h1>
+
+                    {/* Role with Typewriter */}
+                    <p style={{
+                        fontFamily: 'monospace',
+                        fontSize: '1.1rem',
+                        color: 'var(--text-secondary)',
+                        marginBottom: '0.5rem'
+                    }}>
+                        AI / ML Developer
+                    </p>
+
+                    {/* Typewriter Tagline */}
+                    <p style={{
+                        fontFamily: 'monospace',
+                        fontSize: '0.95rem',
+                        color: 'var(--accent-primary)',
+                        marginBottom: '2rem',
+                        minHeight: '1.5rem'
+                    }}>
+                        {'>'} {displayText}
+                        <span style={{
+                            opacity: showCursor ? 1 : 0,
+                            transition: 'opacity 0.1s'
+                        }}>▌</span>
+                    </p>
+
+                    {/* ASCII Divider */}
+                    <div style={{
+                        fontFamily: 'monospace',
+                        fontSize: '0.75rem',
+                        color: 'var(--text-muted)',
+                        marginBottom: '1.5rem',
+                        opacity: 0.5
+                    }}>
+                        ════════════════════════
+                    </div>
+
+                    {/* Navigation Links - Retro Style */}
+                    <div style={{
+                        display: 'flex',
+                        gap: '1.5rem',
+                        justifyContent: 'center',
+                        fontFamily: 'monospace',
+                        fontSize: '0.9rem'
+                    }}>
+                        <Link
+                            to="/work"
+                            style={{
+                                color: 'var(--text-primary)',
+                                textDecoration: 'none',
+                                padding: '0.5rem 0',
+                                borderBottom: '1px dashed var(--border-primary)',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--accent-primary)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--text-primary)'}
+                        >
+                            [01] WORK
+                        </Link>
+                        <Link
+                            to="/blogs"
+                            style={{
+                                color: 'var(--text-primary)',
+                                textDecoration: 'none',
+                                padding: '0.5rem 0',
+                                borderBottom: '1px dashed var(--border-primary)',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--accent-primary)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--text-primary)'}
+                        >
+                            [02] BLOG
+                        </Link>
+                        <a
+                            href="https://github.com/ajkumar-13"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                color: 'var(--text-primary)',
+                                textDecoration: 'none',
+                                padding: '0.5rem 0',
+                                borderBottom: '1px dashed var(--border-primary)',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--accent-primary)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--text-primary)'}
+                        >
+                            [03] GITHUB
+                        </a>
+                    </div>
                 </div>
 
-                {/* Main Heading */}
-                <h1 style={{
-                    fontSize: 'clamp(2.5rem, 8vw, 5rem)',
-                    fontWeight: '800',
-                    marginBottom: '1.5rem',
-                    lineHeight: 1.1
-                }}>
-                    Hi, I'm{' '}
-                    <span className="gradient-text">Ajay Kumar</span>
-                </h1>
-
-                {/* Subheading */}
-                <h2 style={{
-                    fontSize: 'clamp(1.2rem, 3vw, 1.75rem)',
-                    fontWeight: '400',
-                    color: 'var(--text-secondary)',
-                    marginBottom: '2rem',
-                    maxWidth: '700px',
-                    lineHeight: 1.5
-                }}>
-                    Building intelligent systems at the intersection of{' '}
-                    <strong style={{ color: 'var(--accent-primary)' }}>Machine Learning</strong>,{' '}
-                    <strong style={{ color: 'var(--accent-secondary)' }}>Deep Learning</strong>, and{' '}
-                    <strong style={{ color: 'var(--accent-tertiary)' }}>Web Technologies</strong>
-                </h2>
-
-                {/* Description */}
-                <p style={{
-                    fontSize: '1.1rem',
-                    color: 'var(--text-muted)',
-                    maxWidth: '600px',
-                    marginBottom: '2.5rem',
-                    lineHeight: 1.7
-                }}>
-                    Passionate about transforming ideas into production-ready AI solutions.
-                    From neural networks to full-stack applications, I build technology that makes a difference.
-                </p>
-
-                {/* CTA Buttons */}
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    <Link to="/work" className={styles.btnPrimary}>
-                        <span>View Projects</span>
-                        <span>→</span>
-                    </Link>
-                    <Link to="/blogs" className={styles.btnSecondary}>
-                        <span>📖</span>
-                        <span>Read Blog</span>
-                    </Link>
-                    <a
-                        href="https://github.com/ajkumar-13"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.btnSecondary}
-                    >
-                        <span>⭐</span>
-                        <span>GitHub</span>
-                    </a>
-                </div>
-
-                {/* Scroll indicator */}
+                {/* Status Line at Bottom */}
                 <div style={{
                     position: 'absolute',
                     bottom: '2rem',
-                    animation: 'float 3s ease-in-out infinite'
+                    fontFamily: 'monospace',
+                    fontSize: '0.75rem',
+                    color: 'var(--text-muted)',
+                    opacity: 0.4
                 }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                        Scroll to explore ↓
-                    </span>
-                </div>
-            </section>
-
-            {/* Skills/Tech Stack Section */}
-            <section style={{ padding: '4rem 0' }}>
-                <div className={styles.sectionHeader}>
-                    <span className={styles.sectionLabel}>💡 Tech Stack</span>
-                    <h2 className={styles.sectionTitle}>
-                        Technologies I <span className="gradient-text">Work With</span>
-                    </h2>
-                </div>
-
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                    gap: '1rem',
-                    maxWidth: '800px',
-                    margin: '0 auto'
-                }}>
-                    {[
-                        { name: 'Python', icon: '🐍' },
-                        { name: 'PyTorch', icon: '🔥' },
-                        { name: 'TensorFlow', icon: '🧠' },
-                        { name: 'React', icon: '⚛️' },
-                        { name: 'FastAPI', icon: '⚡' },
-                        { name: 'OpenCV', icon: '👁️' },
-                        { name: 'Docker', icon: '🐳' },
-                        { name: 'Git', icon: '📂' },
-                    ].map((tech, i) => (
-                        <div key={i} className="glass-card" style={{
-                            padding: '1.5rem 1rem',
-                            textAlign: 'center',
-                            transition: 'all 0.3s ease'
-                        }}>
-                            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{tech.icon}</div>
-                            <div style={{ fontSize: '0.9rem', fontWeight: '500' }}>{tech.name}</div>
-                        </div>
-                    ))}
+                    STATUS: AVAILABLE FOR WORK • SCROLL ↓
                 </div>
             </section>
         </div>

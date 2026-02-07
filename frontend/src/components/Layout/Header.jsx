@@ -6,17 +6,13 @@ import styles from '../../styles/components.module.css';
  * Header Component
  * 
  * The navigation bar at the top of every page.
- * Features:
- * - Logo with gradient text
- * - Navigation links
- * - Theme toggle (sun/moon icon)
- * - 2D/3D view toggle button
+ * Note: Admin page is intentionally hidden from navigation.
+ * Access it directly via /admin URL when you need it.
  */
 const Header = () => {
     const location = useLocation();
-    const { theme, toggleTheme, isDark } = useTheme();
+    const { toggleTheme, isDark } = useTheme();
 
-    // Check if current path matches the link
     const isActive = (path) => location.pathname === path;
 
     return (
@@ -24,11 +20,10 @@ const Header = () => {
             <div className={styles.headerContent}>
                 {/* Logo */}
                 <Link to="/" className={styles.logo}>
-                    <span className={styles.logoIcon}>🧠</span>
-                    Ajay Kumar
+                    AK
                 </Link>
 
-                {/* Navigation Links */}
+                {/* Navigation Links - Admin intentionally excluded */}
                 <nav className={styles.nav}>
                     <Link
                         to="/"
@@ -40,19 +35,13 @@ const Header = () => {
                         to="/work"
                         className={`${styles.navLink} ${isActive('/work') ? styles.active : ''}`}
                     >
-                        Projects
+                        Work
                     </Link>
                     <Link
                         to="/blogs"
                         className={`${styles.navLink} ${location.pathname.startsWith('/blogs') ? styles.active : ''}`}
                     >
                         Blog
-                    </Link>
-                    <Link
-                        to="/admin"
-                        className={`${styles.navLink} ${isActive('/admin') ? styles.active : ''}`}
-                    >
-                        Admin
                     </Link>
                 </nav>
 
@@ -66,15 +55,6 @@ const Header = () => {
                         title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
                     >
                         {isDark ? '☀️' : '🌙'}
-                    </button>
-
-                    {/* 2D/3D Toggle (placeholder for future) */}
-                    <button
-                        className={styles.viewToggle}
-                        onClick={() => alert("3D View coming soon! 🚀")}
-                        title="Toggle 3D View"
-                    >
-                        2D ↔ 3D
                     </button>
                 </div>
             </div>
