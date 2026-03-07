@@ -1,0 +1,16 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.84.0",
+    "django>=6.0.3",
+    "django-cors-headers>=4.9.0",
+    "djangorestframework>=3.16.1",
+    "google-generativeai>=0.8.6",
+    "ollama>=0.6.1",
+    "openai>=2.26.0",
+    "pillow>=12.1.1",
+    "python-dotenv>=1.2.2",
+]

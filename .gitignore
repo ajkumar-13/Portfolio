@@ -16,9 +16,11 @@ build/
 *.db
 *.sqlite3
 
-# Uploads (keep folder structure, ignore content)
-backend/uploads/*
-!backend/uploads/.gitkeep
+# Backend: uploaded media files
+backend/media/
+
+# uv virtual environment
+backend/.venv/
 
 # Node.js
 node_modules/
