@@ -302,3 +302,48 @@ New entries are appended at the bottom. Never remove entries.
 - The homepage is now structured like a real feature module instead of a polished one-off file.
 - The retro landing page has a clearer narrative hierarchy and stronger reusable design language.
 - Phase 2 can keep iterating on the front page without reopening the earlier bundle and architecture problems.
+
+---
+
+## Entry #007 — Phase 2 App Shell Cleanup
+
+**Date:** 2026-04-06
+**Goal:** Continue Phase 2 by reducing inline shell styling, removing placeholder frame content, and making the app chrome feel more like a maintained product surface.
+
+### Steps Taken
+
+1. Refactored the header navigation to use a shared nav-item list instead of hand-written repeated link blocks.
+2. Moved the `Let's Train` route badge styling out of inline JSX and into the shared shell stylesheet.
+3. Replaced the old footer placeholder links with a real shell footer that separates internal routes from the primary external profile link.
+4. Reworked `frontend/src/components/SettingsDock.jsx` to use a dedicated CSS module rather than a large inline-style block.
+5. Added better settings-dock behavior by supporting click-outside close, Escape close, and a graceful disabled state when browser audio APIs are unavailable.
+6. Kept the settings surface aligned with the retro shell language by switching the control labels to more deliberate monospace states like `CTL`, `MIDNIGHT`, `DAYSHIFT`, `ON`, and `OFF`.
+
+### Expected Benefits
+
+- Lower maintenance cost because shell presentation logic is now less entangled with JSX markup.
+- Better consistency between the homepage direction and the rest of the application frame.
+- Cleaner user experience because the footer no longer advertises dead placeholder destinations.
+- Better behavior around the settings menu because it now closes predictably and handles unsupported audio more safely.
+
+### Problems Faced
+
+- The first patch attempt for the shell cleanup failed because the footer replacement diff did not match the existing file cleanly, so the changes had to be reapplied in smaller controlled updates.
+- The settings dock was still carrying a prototype-era inline-style approach, which meant the safest path was a full component replacement rather than a partial edit.
+
+### Validation
+
+1. Frontend editor diagnostics:
+	- Result: passed. No errors remained in the updated header, footer, settings dock, or shell stylesheet.
+2. Frontend production build:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed with no chunk-size warning.
+3. Build outcome:
+	- The shared `index` CSS bundle increased to about 16.47 kB because the shell now carries more explicit styling, but the JavaScript bundles remained small and clean.
+	- The main `index` JavaScript chunk remained lean at about 14.46 kB, while `react-vendor` stayed at about 229 kB.
+
+### System Benefit After This Entry
+
+- The app shell now better matches the production-minded direction already established in the home feature.
+- Phase 2 has reduced another major source of prototype-style inline UI code.
+- The frontend frame is more honest, more maintainable, and easier to evolve as a cohesive design system.

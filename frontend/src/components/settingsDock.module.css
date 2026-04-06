@@ -1,0 +1,167 @@
+.root {
+    position: relative;
+    z-index: 100;
+}
+
+.trigger {
+    min-width: 3rem;
+    height: 2.5rem;
+    padding: 0 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-primary);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.trigger:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+}
+
+.triggerOpen {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: transparent;
+}
+
+.triggerText {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.menu {
+    position: absolute;
+    top: calc(100% + 0.7rem);
+    right: 0;
+    width: min(19rem, calc(100vw - 2rem));
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid var(--border-primary);
+    background: var(--bg-glass);
+    backdrop-filter: blur(18px);
+    box-shadow: var(--shadow-lg), 0 0 40px var(--glow-color);
+    display: grid;
+    gap: 1rem;
+    animation: dockIn 180ms ease-out;
+}
+
+.section {
+    display: grid;
+    gap: 0.6rem;
+    padding: 0.15rem 0;
+}
+
+.sectionLabel {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.rowLabel {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.actionButton {
+    min-width: 5.5rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-secondary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.actionButton:hover:not(:disabled) {
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+}
+
+.actionButtonActive {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: transparent;
+}
+
+.actionButton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.hint {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.55;
+}
+
+.sliderBlock {
+    display: grid;
+    gap: 0.45rem;
+    padding-top: 0.15rem;
+}
+
+.sliderHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.sliderValue {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.range {
+    width: 100%;
+    accent-color: var(--accent-primary);
+}
+
+@keyframes dockIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .menu {
+        right: -0.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .trigger,
+    .actionButton,
+    .menu {
+        transition: none;
+        animation: none;
+    }
+}

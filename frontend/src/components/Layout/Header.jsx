@@ -25,16 +25,22 @@ import { Link, useLocation } from 'react-router-dom';
 import styles from '../../styles/components.module.css';
 import SettingsDock from '../SettingsDock';
 
+const NAV_ITEMS = [
+    { to: '/', label: 'Home', isActive: (location) => location.pathname === '/' },
+    { to: '/projects', label: 'Projects', isActive: (location) => location.pathname === '/projects' },
+    { to: '/blogs', label: 'Blog', isActive: (location) => location.pathname.startsWith('/blogs') },
+    {
+        to: '/lets-train',
+        label: "Let's Train",
+        isActive: (location) => location.pathname === '/lets-train',
+        badge: 'NEXT',
+    },
+];
+
 const Header = () => {
     // useLocation() gives us the current URL info.
     // location.pathname = "/blogs/my-post"
     const location = useLocation();
-
-    // Helper function: returns true if the current page matches `path`
-    const isActive = (path) => location.pathname === path;
-
-    // For sections with sub-routes (like /blogs/series/1), we check with startsWith
-    const isSection = (prefix) => location.pathname.startsWith(prefix);
 
     return (
         <header className={styles.header}>
@@ -47,47 +53,16 @@ const Header = () => {
 
                 {/* Navigation Links */}
                 <nav className={styles.nav}>
-                    <Link
-                        to="/"
-                        className={`${styles.navLink} ${isActive('/') ? styles.active : ''}`}
-                    >
-                        Home
-                    </Link>
-                    <Link
-                        to="/projects"
-                        className={`${styles.navLink} ${isActive('/projects') ? styles.active : ''}`}
-                    >
-                        Projects
-                    </Link>
-                    <Link
-                        to="/blogs"
-                        className={`${styles.navLink} ${isSection('/blogs') ? styles.active : ''}`}
-                    >
-                        Blog
-                    </Link>
-                    <Link
-                        to="/lets-train"
-                        className={`${styles.navLink} ${isActive('/lets-train') ? styles.active : ''}`}
-                        style={{ position: 'relative' }}
-                    >
-                        Let's Train
-                        {/* "Soon" badge — small indicator that this is coming soon */}
-                        <span style={{
-                            position: 'absolute',
-                            top: '-6px',
-                            right: '-8px',
-                            fontSize: '0.55rem',
-                            fontFamily: 'monospace',
-                            background: 'var(--accent-primary)',
-                            color: 'white',
-                            borderRadius: '3px',
-                            padding: '1px 3px',
-                            lineHeight: 1.2,
-                            opacity: 0.85,
-                        }}>
-                            SOON
-                        </span>
-                    </Link>
+                    {NAV_ITEMS.map((item) => (
+                        <Link
+                            key={item.to}
+                            to={item.to}
+                            className={`${styles.navLink} ${item.isActive(location) ? styles.active : ''} ${item.badge ? styles.navLinkWithBadge : ''}`}
+                        >
+                            {item.label}
+                            {item.badge ? <span className={styles.navBadge}>{item.badge}</span> : null}
+                        </Link>
+                    ))}
                 </nav>
 
                 {/* Settings Dock (theme toggle + other settings) */}

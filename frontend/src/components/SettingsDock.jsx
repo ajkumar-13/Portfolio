@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+
 import { useTheme } from '../app/providers/ThemeProvider';
+import styles from './settingsDock.module.css';
 
 /**
  * Settings Dock Component
@@ -8,6 +10,7 @@ import { useTheme } from '../app/providers/ThemeProvider';
 const SettingsDock = () => {
     const { isDark, toggleTheme } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
+    const rootRef = useRef(null);
 
     // Audio State
     const audioContextRef = useRef(null);
@@ -16,14 +19,24 @@ const SettingsDock = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(0.5);
 
+    const audioSupported = typeof window !== 'undefined' && !!(window.AudioContext || window.webkitAudioContext);
+
     // Initialize Audio Context
     const initAudio = () => {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+        if (!AudioContextClass) {
+            return false;
+        }
+
         if (!audioContextRef.current) {
-            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+            audioContextRef.current = new AudioContextClass();
         }
         if (audioContextRef.current.state === 'suspended') {
             audioContextRef.current.resume();
         }
+
+        return true;
     };
 
     // Create Pink Noise (Waterfall)
@@ -103,7 +116,10 @@ const SettingsDock = () => {
             }
             setIsPlaying(false);
         } else {
-            initAudio();
+            if (!audioSupported || !initAudio()) {
+                return;
+            }
+
             waterfallNodeRef.current = createWaterfall();
             birdIntervalRef.current = setInterval(() => {
                 if (Math.random() > 0.6) playBirdChirp();
@@ -126,116 +142,100 @@ const SettingsDock = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (!isOpen) {
+            return undefined;
+        }
+
+        const handlePointerDown = (event) => {
+            if (rootRef.current && !rootRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('mousedown', handlePointerDown);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen]);
+
+    const modeLabel = isDark ? 'MIDNIGHT' : 'DAYSHIFT';
+    const ambienceLabel = !audioSupported ? 'N/A' : isPlaying ? 'ON' : 'OFF';
+
     return (
-        <div style={{
-            position: 'relative',
-            zIndex: 100
-        }}>
-            {/* Toggle Icon */}
+        <div ref={rootRef} className={styles.root}>
             <button
+                type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: isOpen ? 'var(--accent-primary)' : 'transparent',
-                    color: isOpen ? '#fff' : 'var(--text-primary)',
-                    border: '1px solid var(--border-primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s'
-                }}
+                className={`${styles.trigger} ${isOpen ? styles.triggerOpen : ''}`}
                 title="Settings"
                 aria-label="Settings"
+                aria-expanded={isOpen}
+                aria-controls="settings-dock-menu"
             >
-                <span style={{ fontSize: '1.2rem', transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
-                    ⚙️
-                </span>
+                <span className={styles.triggerText}>CTL</span>
             </button>
 
-            {/* Expanded Menu - Dropdown */}
             {isOpen && (
-                <div style={{
-                    position: 'absolute',
-                    top: '120%',
-                    right: 0,
-                    padding: '1.25rem',
-                    background: 'var(--bg-glass)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid var(--border-primary)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1.5rem',
-                    minWidth: '200px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-                    animation: 'fadeIn 0.2s ease-out'
-                }}>
-                    {/* Theme Controls */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Theme</span>
-                        <button
-                            onClick={toggleTheme}
-                            style={{
-                                background: 'var(--bg-secondary)',
-                                border: '1px solid var(--border-secondary)',
-                                borderRadius: '20px',
-                                padding: '0.4rem 0.8rem',
-                                cursor: 'pointer',
-                                fontSize: '0.9rem',
-                                color: 'var(--text-primary)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                transition: 'all 0.2s'
-                            }}
-                        >
-                            <span>{isDark ? '🌙' : '☀️'}</span>
-                            <span>{isDark ? 'Dark' : 'Light'}</span>
-                        </button>
-                    </div>
-
-                    {/* Audio Controls */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Ambience</span>
+                <div id="settings-dock-menu" className={styles.menu}>
+                    <div className={styles.section}>
+                        <p className={styles.sectionLabel}>Display</p>
+                        <div className={styles.row}>
+                            <span className={styles.rowLabel}>Theme</span>
                             <button
-                                onClick={toggleAudio}
-                                style={{
-                                    background: isPlaying ? 'var(--accent-primary)' : 'var(--bg-secondary)',
-                                    color: isPlaying ? '#fff' : 'var(--text-primary)',
-                                    border: '1px solid var(--border-secondary)',
-                                    borderRadius: '50%',
-                                    width: '32px',
-                                    height: '32px',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    transition: 'all 0.2s'
-                                }}
+                                type="button"
+                                onClick={toggleTheme}
+                                className={styles.actionButton}
                             >
-                                {isPlaying ? '🔊' : '🔇'}
+                                {modeLabel}
                             </button>
                         </div>
+                        <p className={styles.hint}>Toggle the shell between night-mode and warm daylight tones.</p>
+                    </div>
+
+                    <div className={styles.section}>
+                        <p className={styles.sectionLabel}>Ambience</p>
+                        <div className={styles.row}>
+                            <span className={styles.rowLabel}>Waterfall mix</span>
+                            <button
+                                type="button"
+                                onClick={toggleAudio}
+                                className={`${styles.actionButton} ${isPlaying ? styles.actionButtonActive : ''}`}
+                                disabled={!audioSupported}
+                                aria-pressed={isPlaying}
+                            >
+                                {ambienceLabel}
+                            </button>
+                        </div>
+                        <p className={styles.hint}>
+                            {audioSupported
+                                ? 'Optional ambient synth birds plus low waterfall noise.'
+                                : 'Audio controls are unavailable in this browser.'}
+                        </p>
 
                         {isPlaying && (
-                            <div style={{ width: '100%' }}>
+                            <div className={styles.sliderBlock}>
+                                <div className={styles.sliderHeader}>
+                                    <span className={styles.rowLabel}>Level</span>
+                                    <span className={styles.sliderValue}>{Math.round(volume * 100)}%</span>
+                                </div>
                                 <input
                                     type="range"
                                     min="0"
                                     max="1"
                                     step="0.05"
                                     value={volume}
-                                    onChange={(e) => setVolume(parseFloat(e.target.value))}
-                                    style={{
-                                        width: '100%',
-                                        accentColor: 'var(--accent-primary)',
-                                        height: '4px',
-                                        borderRadius: '2px'
-                                    }}
+                                    onChange={(event) => setVolume(parseFloat(event.target.value))}
+                                    className={styles.range}
                                 />
                             </div>
                         )}
