@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+
+import BlogEmptyState from '../components/BlogEmptyState';
+import BlogStateView from '../components/BlogStateView';
 import { api } from '../../../shared/api/api';
-import styles from '../../../styles/components.module.css';
+import shellStyles from '../../../styles/components.module.css';
+import blogStyles from '../styles/blog.module.css';
 
 /**
  * BlogSeries Page Component
@@ -31,83 +35,50 @@ const BlogSeriesPage = () => {
     }, [id]);
 
     if (loading) {
-        return (
-            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
-                <p style={{ color: 'var(--text-secondary)' }}>Loading series...</p>
-            </div>
-        );
+        return <BlogStateView icon="⏳" message="Loading series..." />;
     }
 
     if (error || !series) {
-        return (
-            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
-                <p style={{ color: 'var(--text-secondary)' }}>{error || 'Series not found'}</p>
-            </div>
-        );
+        return <BlogStateView icon="❌" message={error || 'Series not found'} />;
     }
 
     return (
         <div className="container">
             {/* Series Header */}
-            <div className={styles.sectionHeader} style={{ paddingTop: '2rem' }}>
-                <Link to="/blogs" style={{
-                    color: 'var(--text-muted)',
-                    fontSize: '0.9rem',
-                    marginBottom: '1rem',
-                    display: 'inline-block'
-                }}>
+            <div className={`${shellStyles.sectionHeader} ${blogStyles.pageHeader}`}>
+                <Link to="/blogs" className={blogStyles.backLink}>
                     ← Back to all series
                 </Link>
-                <h1 className={styles.sectionTitle}>
+                <h1 className={shellStyles.sectionTitle}>
                     <span className="gradient-text">{series.title}</span>
                 </h1>
-                <p className={styles.sectionDescription}>
+                <p className={shellStyles.sectionDescription}>
                     {series.description}
                 </p>
             </div>
 
             {/* Articles List */}
-            <div style={{ maxWidth: '800px', margin: '2rem auto 4rem' }}>
+            <div className={blogStyles.seriesList}>
                 {series.posts && series.posts.length > 0 ? (
                     series.posts.map((blog, index) => (
                         <Link
                             key={blog.id}
                             to={`/blogs/${blog.slug}`}
-                            style={{ textDecoration: 'none' }}
+                            className={blogStyles.seriesItemLink}
                         >
                             <article
-                                className={styles.card}
-                                style={{
-                                    marginBottom: '1.5rem',
-                                    display: 'flex',
-                                    alignItems: 'stretch'
-                                }}
+                                className={`${shellStyles.card} ${blogStyles.seriesItemCard}`}
                             >
                                 {/* Order Number */}
-                                <div style={{
-                                    width: '80px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    background: 'var(--gradient-glow)',
-                                    borderRight: '1px solid var(--border-secondary)',
-                                    fontSize: '1.5rem',
-                                    fontWeight: '700',
-                                    color: 'var(--text-muted)',
-                                    flexShrink: 0
-                                }}>
+                                <div className={blogStyles.seriesOrder}>
                                     {(index + 1).toString().padStart(2, '0')}
                                 </div>
 
                                 {/* Content */}
-                                <div className={styles.cardContent} style={{ flex: 1 }}>
-                                    <h2 className={styles.cardTitle}>{blog.title}</h2>
-                                    <p className={styles.cardExcerpt}>{blog.excerpt}</p>
-                                    <span style={{
-                                        color: 'var(--accent-primary)',
-                                        fontSize: '0.9rem',
-                                        fontWeight: '500'
-                                    }}>
+                                <div className={`${shellStyles.cardContent} ${blogStyles.seriesItemContent}`}>
+                                    <h2 className={shellStyles.cardTitle}>{blog.title}</h2>
+                                    <p className={shellStyles.cardExcerpt}>{blog.excerpt}</p>
+                                    <span className={blogStyles.seriesAction}>
                                         Read article →
                                     </span>
                                 </div>
@@ -115,14 +86,12 @@ const BlogSeriesPage = () => {
                         </Link>
                     ))
                 ) : (
-                    <div className="glass-card" style={{
-                        textAlign: 'center',
-                        padding: '3rem'
-                    }}>
-                        <p style={{ color: 'var(--text-secondary)' }}>
-                            No articles in this series yet.
-                        </p>
-                    </div>
+                    <BlogEmptyState
+                        icon="🗂️"
+                        title="No Articles Yet"
+                        message="This series exists, but it does not have any published articles yet."
+                        className={blogStyles.seriesEmpty}
+                    />
                 )}
             </div>
         </div>

@@ -39,15 +39,19 @@ Portfolio/
 │       ├── app/                # App shell, router, providers, error boundary
 │       ├── features/
 │       │   ├── blog/
-│       │   │   ├── components/ # ChatPanel, MarkdownContent
-│       │   │   └── pages/      # BlogsPage, BlogSeriesPage, BlogPostPage
+│       │   │   ├── components/ # ChatPanel, MarkdownContent, BlogStateView, BlogEmptyState
+│       │   │   ├── pages/      # BlogsPage, BlogSeriesPage, BlogPostPage
+│       │   │   └── styles/     # Feature-specific blog layout and state surfaces
 │       │   ├── home/
+│       │   │   ├── components/ # HomePanel, HomeMetricGrid, HomeRouteCard
 │       │   │   ├── pages/      # HomePage
 │       │   │   └── styles/     # Feature-specific retro landing page styles
 │       │   ├── projects/
-│       │   │   └── pages/      # ProjectsPage
+│       │   │   ├── pages/      # ProjectsPage
+│       │   │   └── styles/     # Project card layout and tags
 │       │   └── training/
-│       │       └── pages/      # LetsTrainPage
+│       │       ├── pages/      # LetsTrainPage
+│       │       └── styles/     # Training status, feature grid, and CTA surfaces
 │       ├── components/
 │       │   └── Layout/         # Header, Footer, Layout
 │       ├── shared/

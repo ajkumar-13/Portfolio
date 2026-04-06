@@ -24,7 +24,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import styles from '../../../styles/components.module.css';
+import shellStyles from '../../../styles/components.module.css';
+import projectStyles from '../styles/projects.module.css';
 
 // ── Project Data ──────────────────────────────────────────────────────────────
 // Defining data as a constant outside the component means it's created once
@@ -68,77 +69,28 @@ const PROJECTS = [
 // A small component defined in this file since it's only used here.
 // Props are destructured directly in the function signature: { title, description, ... }
 const ProjectCard = ({ title, description, tech, github, highlight }) => (
-    <div style={{
-        background: 'var(--bg-glass)',
-        border: `1px solid ${highlight ? 'var(--accent-primary)' : 'var(--border-secondary)'}`,
-        borderRadius: 'var(--radius-lg)',
-        padding: '2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        position: 'relative',
-    }}
-        onMouseEnter={e => {
-            e.currentTarget.style.transform = 'translateY(-3px)';
-            e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
-        }}
-        onMouseLeave={e => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-        }}
-    >
+    <article className={`${projectStyles.card} ${highlight ? projectStyles.cardFeatured : ''}`}>
         {/* Featured badge for highlighted projects */}
         {highlight && (
-            <span style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: 'var(--accent-primary)',
-                color: 'white',
-                fontSize: '0.7rem',
-                fontFamily: 'monospace',
-                padding: '0.2rem 0.5rem',
-                borderRadius: '4px',
-                letterSpacing: '0.05em',
-            }}>
+            <span className={projectStyles.badge}>
                 FEATURED
             </span>
         )}
 
         {/* Project title */}
-        <h3 style={{
-            fontSize: '1.25rem',
-            fontWeight: '700',
-            color: 'var(--text-primary)',
-            margin: 0,
-        }}>
+        <h3 className={projectStyles.cardTitle}>
             {title}
         </h3>
 
         {/* Description */}
-        <p style={{
-            color: 'var(--text-secondary)',
-            lineHeight: 1.7,
-            fontSize: '0.95rem',
-            margin: 0,
-            flex: 1, // Push tech tags and link to the bottom
-        }}>
+        <p className={projectStyles.cardDescription}>
             {description}
         </p>
 
         {/* Tech stack tags */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div className={projectStyles.techList}>
             {tech.map(tag => (
-                <span key={tag} style={{
-                    background: 'var(--bg-secondary)',
-                    border: '1px solid var(--border-secondary)',
-                    color: 'var(--text-muted)',
-                    fontSize: '0.75rem',
-                    fontFamily: 'monospace',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '4px',
-                }}>
+                <span key={tag} className={projectStyles.techTag}>
                     {tag}
                 </span>
             ))}
@@ -149,47 +101,25 @@ const ProjectCard = ({ title, description, tech, github, highlight }) => (
             href={github}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                color: 'var(--accent-primary)',
-                textDecoration: 'none',
-                fontSize: '0.875rem',
-                fontFamily: 'monospace',
-                transition: 'opacity 0.2s',
-            }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            className={projectStyles.cardLink}
         >
             View on GitHub →
         </a>
-    </div>
+    </article>
 );
 
 // ── Main Projects Page ────────────────────────────────────────────────────────
 const ProjectsPage = () => {
     return (
-        <div className="container" style={{ padding: '4rem 1.5rem' }}>
+        <div className={`container ${projectStyles.page}`}>
 
             {/* Page Header */}
-            <header style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                <span className={styles.sectionLabel}>MY WORK</span>
-                <h1 style={{
-                    fontSize: 'clamp(2rem, 5vw, 3rem)',
-                    fontWeight: '800',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                }}>
+            <header className={projectStyles.header}>
+                <span className={shellStyles.sectionLabel}>MY WORK</span>
+                <h1 className={projectStyles.title}>
                     Projects
                 </h1>
-                <p style={{
-                    color: 'var(--text-secondary)',
-                    fontSize: '1.1rem',
-                    maxWidth: '600px',
-                    margin: '0 auto',
-                    lineHeight: 1.7,
-                }}>
+                <p className={projectStyles.intro}>
                     Building from the ground up — vector databases, GPU kernels,
                     LLM pipelines, and AI agent infrastructure.
                 </p>
@@ -197,13 +127,7 @@ const ProjectsPage = () => {
 
             {/* Projects Grid */}
             {/* CSS Grid with auto-fill columns: min 300px, max 1 fraction of space */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '1.5rem',
-                maxWidth: '1100px',
-                margin: '0 auto',
-            }}>
+            <div className={projectStyles.grid}>
                 {/* .map() renders a ProjectCard for each project in the array */}
                 {PROJECTS.map(project => (
                     <ProjectCard key={project.id} {...project} />
@@ -211,15 +135,15 @@ const ProjectsPage = () => {
             </div>
 
             {/* GitHub CTA */}
-            <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+            <div className={projectStyles.footerCta}>
+                <p className={projectStyles.footerNote}>
                     More on GitHub
                 </p>
                 <a
                     href="https://github.com/ajkumar-13"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.btnPrimary}
+                    className={shellStyles.btnPrimary}
                 >
                     github.com/ajkumar-13
                 </a>

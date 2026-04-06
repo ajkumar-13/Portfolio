@@ -26,9 +26,12 @@
 
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+import BlogStateView from '../components/BlogStateView';
 import MarkdownContent from '../components/MarkdownContent';
 import { api } from '../../../shared/api/api';
-import styles from '../../../styles/components.module.css';
+import shellStyles from '../../../styles/components.module.css';
+import blogStyles from '../styles/blog.module.css';
 
 const ChatPanel = lazy(() => import('../components/ChatPanel'));
 
@@ -71,33 +74,18 @@ const BlogPostPage = () => {
 
     // ── Loading state ─────────────────────────────────────────────────────────
     if (loading) {
-        return (
-            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
-                <p style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-                    Loading article...
-                </p>
-            </div>
-        );
+        return <BlogStateView icon="⏳" message="Loading article..." mono />;
     }
 
     // ── Error state ───────────────────────────────────────────────────────────
     if (error || !blog) {
-        return (
-            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
-                <p style={{ color: 'var(--text-secondary)' }}>{error || 'Blog not found'}</p>
-            </div>
-        );
+        return <BlogStateView icon="❌" message={error || 'Blog not found'} />;
     }
 
     // ── Main render ───────────────────────────────────────────────────────────
     return (
         // Outer wrapper: full width, flex row to place blog + chat side by side
-        <div style={{
-            display: 'flex',
-            width: '100%',
-            minHeight: 'calc(100vh - 80px)', // Full height minus the header
-            position: 'relative',
-        }}>
+        <div className={blogStyles.postLayout}>
 
             {/* ── Blog Content Area ─────────────────────────────────────────── */}
             {/*
@@ -105,45 +93,23 @@ const BlogPostPage = () => {
              * When the chat panel appears beside it, the blog shrinks to ~65%.
              * The transition makes this animation smooth.
              */}
-            <div style={{
-                flex: 1,
-                minWidth: 0, // Prevents flex children from overflowing
-                transition: 'all 0.3s ease',
-                overflowX: 'hidden',
-            }}>
-                <article style={{
-                    maxWidth: chatOpen ? '700px' : '800px',
-                    margin: '0 auto',
-                    padding: '2rem 1.5rem 4rem',
-                    transition: 'max-width 0.3s ease',
-                }}>
+            <div className={blogStyles.postContent}>
+                <article className={`${blogStyles.postArticle} ${chatOpen ? blogStyles.postArticleChatOpen : ''}`}>
 
                     {/* ── Article Header ─────────────────────────────────── */}
-                    <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                        <span className={styles.sectionLabel}>📖 Article</span>
+                    <header className={blogStyles.postHeader}>
+                        <span className={shellStyles.sectionLabel}>📖 Article</span>
                         {/* Series breadcrumb — shows which series this post belongs to */}
                         {blog.series_title && (
-                            <p style={{
-                                color: 'var(--accent-primary)',
-                                fontFamily: 'monospace',
-                                fontSize: '0.85rem',
-                                marginTop: '0.5rem',
-                                marginBottom: '0.5rem',
-                            }}>
+                            <p className={blogStyles.postSeriesTitle}>
                                 {blog.series_title}
                             </p>
                         )}
-                        <h1 style={{
-                            fontSize: 'clamp(2rem, 5vw, 3rem)',
-                            fontWeight: '700',
-                            marginTop: '0.5rem',
-                            marginBottom: '1rem',
-                            lineHeight: 1.2,
-                        }}>
+                        <h1 className={blogStyles.postTitle}>
                             {blog.title}
                         </h1>
                         {blog.created_at && (
-                            <time style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                            <time className={blogStyles.postPublished}>
                                 {/* Format the ISO date string into "March 7, 2026" */}
                                 Published {new Date(blog.created_at).toLocaleDateString('en-US', {
                                     year: 'numeric',
@@ -159,14 +125,7 @@ const BlogPostPage = () => {
                         <img
                             src={api.getImageUrl(blog.cover_image)}
                             alt={blog.title}
-                            style={{
-                                width: '100%',
-                                maxHeight: '450px',
-                                objectFit: 'cover',
-                                borderRadius: 'var(--radius-lg)',
-                                marginBottom: '3rem',
-                                border: '1px solid var(--border-secondary)',
-                            }}
+                            className={blogStyles.postCover}
                         />
                     )}
 
@@ -182,20 +141,15 @@ const BlogPostPage = () => {
                     <MarkdownContent content={blog.content} />
 
                     {/* ── Article Footer ─────────────────────────────────── */}
-                    <footer style={{
-                        marginTop: '4rem',
-                        paddingTop: '2rem',
-                        borderTop: '1px solid var(--border-secondary)',
-                        textAlign: 'center',
-                    }}>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                    <footer className={blogStyles.postFooter}>
+                        <p className={blogStyles.postFooterText}>
                             Thanks for reading!
                         </p>
                         <a
                             href="https://github.com/ajkumar-13"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={styles.btnSecondary}
+                            className={shellStyles.btnSecondary}
                         >
                             Follow on GitHub
                         </a>
@@ -213,25 +167,7 @@ const BlogPostPage = () => {
              */}
             <button
                 onClick={() => setChatOpen(prev => !prev)}
-                style={{
-                    position: 'fixed',
-                    bottom: '2rem',
-                    right: chatOpen ? 'calc(35% + 1rem)' : '1.5rem',
-                    zIndex: 100,
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: chatOpen ? 'var(--bg-secondary)' : 'var(--accent-primary)',
-                    border: chatOpen ? '1px solid var(--border-secondary)' : 'none',
-                    color: chatOpen ? 'var(--text-primary)' : 'white',
-                    cursor: 'pointer',
-                    fontSize: '1.3rem',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-                    transition: 'right 0.3s ease, background 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
+                className={`${blogStyles.chatToggle} ${chatOpen ? blogStyles.chatToggleOpen : ''}`}
                 title={chatOpen ? 'Close AI chat' : 'Ask AI about this post'}
                 aria-label={chatOpen ? 'Close AI chat' : 'Open AI chat'}
             >
@@ -248,29 +184,10 @@ const BlogPostPage = () => {
              * through the article. height: '100vh' fills the full viewport.
              */}
             {chatOpen && (
-                <div style={{
-                    width: '35%',
-                    minWidth: '300px',
-                    maxWidth: '480px',
-                    position: 'sticky',
-                    top: '0',
-                    height: '100vh',
-                    flexShrink: 0,
-                }}>
+                <div className={blogStyles.chatSidebar}>
                     <Suspense
                         fallback={(
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    height: '100%',
-                                    background: 'var(--bg-secondary)',
-                                    borderLeft: '1px solid var(--border-secondary)',
-                                    color: 'var(--text-secondary)',
-                                    fontFamily: 'monospace',
-                                }}
-                            >
+                            <div className={blogStyles.chatFallback}>
                                 Loading AI chat...
                             </div>
                         )}

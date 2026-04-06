@@ -22,7 +22,7 @@ Every concept is tied to a specific file you can open and read alongside this gu
 13. [Event Handlers](#13-event-handlers)
 14. [CSS Modules and Styling](#14-css-modules-and-styling)
 15. [The API Service Layer](#15-the-api-service-layer)
-16. [Component Composition — ChatPanel + BlogPost](#16-component-composition--chatpanel--blogpost)
+16. [Component Composition — ChatPanel + BlogPostPage](#16-component-composition--chatpanel--blogpostpage)
 17. [The Canvas Game Loop Pattern](#17-the-canvas-game-loop-pattern)
 18. [The Module Registry Pattern](#18-the-module-registry-pattern)
 19. [How Everything Fits Together](#19-how-everything-fits-together)
@@ -70,15 +70,17 @@ const Greeting = () => {
 - Components are reusable — you can render `<Greeting />` 100 times
 
 In this project, components fall into two categories:
-- **Pages** (`src/pages/`) — full page components tied to a URL route
-- **Components** (`src/components/`) — reusable pieces used inside pages
+- **Feature pages** (`src/features/*/pages/`) — full page components tied to a URL route
+- **Feature or shell components** (`src/features/*/components/`, `src/components/`) — reusable pieces used inside routes or the global layout
 
 ```
-App.jsx
-  └── Layout.jsx
-        ├── Header.jsx      ← nav bar on every page
-        ├── [page component] ← changes based on URL
-        └── Footer.jsx
+main.jsx
+  └── app/App.jsx
+      └── app/AppRouter.jsx
+          └── components/Layout/Layout.jsx
+              ├── Header.jsx      ← nav bar on every page
+              ├── [feature page]  ← changes based on URL
+              └── Footer.jsx
 ```
 
 ---
@@ -159,7 +161,7 @@ const [value, setValue] = useState(initialValue);
 //     ↑ current   ↑ setter      ↑ starting value
 ```
 
-**In BlogPost.jsx:**
+**In BlogPostPage.jsx:**
 ```jsx
 const [blog, setBlog] = useState(null);        // blog data from API
 const [loading, setLoading] = useState(true);  // is data loading?
@@ -220,7 +222,7 @@ useEffect(() => { ... }, [slug]);     // runs when slug changes
 useEffect(() => { ... }, [a, b]);     // runs when a OR b changes
 ```
 
-**In BlogPost.jsx** — fetch blog data when the slug in the URL changes:
+**In BlogPostPage.jsx** — fetch blog data when the slug in the URL changes:
 ```jsx
 useEffect(() => {
     const fetchBlog = async () => {
@@ -232,22 +234,23 @@ useEffect(() => {
 }, [slug]);  // re-fetch if user navigates to a different blog post
 ```
 
-**In Home.jsx** — typewriter animation with cleanup:
+**In HomePage.jsx** — rotate the active signal unless the user prefers reduced motion:
 ```jsx
 useEffect(() => {
-    let index = 0;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return undefined;
+    }
+
     const timer = setInterval(() => {
-        setDisplayText(fullText.slice(0, index + 1));
-        index++;
-        if (index >= fullText.length) clearInterval(timer);
-    }, 80);
+        setSignalIndex((currentIndex) => (currentIndex + 1) % SIGNALS.length);
+    }, 2600);
 
     return () => clearInterval(timer);  // ← cleanup: stop timer if user navigates away
 }, []);
 ```
 
 Without the cleanup, the interval would keep running after the user leaves the Home page,
-causing a memory leak and errors updating state on an unmounted component.
+causing a memory leak and repeated state updates on an unmounted component.
 
 ---
 
@@ -320,23 +323,36 @@ If a value needs to update the visible React JSX tree, use `useState`.
 
 ## 8. React Router — Navigation Without Page Reloads
 
-**File: `frontend/src/app/App.jsx`**
+**Files: `frontend/src/app/App.jsx`, `frontend/src/app/AppRouter.jsx`**
 
 React Router enables navigation between pages without full browser reloads.
 When you click a `<Link>`, only the component changes — the browser doesn't reload.
 
-### Setup in App.jsx
+### Setup in App.jsx and AppRouter.jsx
 
 ```jsx
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// App.jsx
+<ThemeProvider>
+    <BrowserRouter basename={ROUTER_BASENAME}>
+        <AppErrorBoundary>
+            <AppRouter />
+        </AppErrorBoundary>
+    </BrowserRouter>
+</ThemeProvider>
 
-<Router>
-    <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blogs/:slug" element={<BlogPost />} />
-    </Routes>
-</Router>
+// AppRouter.jsx
+<Layout>
+    <Suspense fallback={<RouteFallback />}>
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/blogs" element={<BlogsPage />} />
+            <Route path="/blogs/series/:id" element={<BlogSeriesPage />} />
+            <Route path="/blogs/:slug" element={<BlogPostPage />} />
+            <Route path="/lets-train" element={<LetsTrainPage />} />
+        </Routes>
+    </Suspense>
+</Layout>
 ```
 
 `:slug` is a URL parameter — it matches anything and captures it as a variable.
@@ -346,7 +362,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 **`useParams()`** — read URL parameters:
 ```jsx
-// In BlogPost.jsx (route: /blogs/:slug)
+// In BlogPostPage.jsx (route: /blogs/:slug)
 const { slug } = useParams();
 // If URL is /blogs/my-post, slug = "my-post"
 ```
@@ -380,7 +396,7 @@ Use `<a>` only for external links (like GitHub).
 Context solves "prop drilling" — passing data through many component levels just to
 reach a deeply nested component that needs it.
 
-Without context, to pass `theme` from App to Header to SettingsDock:
+Without context, to pass `theme` from the app root to `SettingsDock` through layout components:
 ```
 App (theme) → Layout (theme) → Header (theme) → SettingsDock (theme)
 ```
@@ -391,9 +407,9 @@ With context, any component can access `theme` directly:
 // 1. Create the context
 const ThemeContext = createContext();
 
-// 2. Provide it at the top level (in App.jsx)
+// 2. Provide it near the app root (in App.jsx)
 <ThemeProvider>
-    <Router>...</Router>
+    <BrowserRouter>...</BrowserRouter>
 </ThemeProvider>
 
 // 3. Consume it anywhere in the tree
@@ -414,7 +430,7 @@ We use the browser's `fetch()` API to call our Django backend:
 
 ```jsx
 // Basic fetch pattern
-const response = await fetch('http://localhost:8000/api/series/');
+const response = await fetch(`${API_BASE_URL}/series/`);
 const data = await response.json();
 ```
 
@@ -457,8 +473,8 @@ useEffect(() => {
     load();
 }, []);
 
-if (loading) return <p>Loading...</p>;
-if (error) return <p>Error: {error}</p>;
+if (loading) return <BlogStateView icon="⏳" message="Loading..." />;
+if (error) return <BlogStateView icon="❌" message={error} />;
 return <div>{/* render data */}</div>;
 ```
 
@@ -483,11 +499,11 @@ if (error) return <p>Error!</p>;
 return <main>...</main>;
 ```
 
-In BlogPost.jsx, we use all three patterns:
+In BlogPostPage.jsx, we use all three patterns:
 ```jsx
 // Early returns for loading/error states
-if (loading) return <div>Loading article...</div>;
-if (error) return <div>{error}</div>;
+if (loading) return <BlogStateView icon="⏳" message="Loading article..." mono />;
+if (error) return <BlogStateView icon="❌" message={error} />;
 
 // Short-circuit to show chat panel only when open
 {chatOpen && <ChatPanel blogSlug={slug} onClose={() => setChatOpen(false)} />}
@@ -507,26 +523,35 @@ If you want to keep the state and just hide the element, use CSS instead:
 </div>
 ```
 
-### CSS transitions for smooth show/hide
+### CSS transitions for smooth state changes
 
 `display: none` and mounting/unmounting are instant — no animation possible.
-When you want a fade or slide, use `opacity` + `transform` instead:
+When you want motion, the current codebase generally toggles CSS classes instead of
+building large inline style objects.
 
 ```jsx
-// Home.jsx — hero card dismiss animation
-<div style={{
-    opacity:    cardVisible ? 1 : 0,
-    transform:  cardVisible ? 'translateY(0)' : 'translateY(-20px)',
-    transition: 'opacity 0.4s ease, transform 0.4s ease',
-    pointerEvents: cardVisible ? 'auto' : 'none',  // disable clicks when invisible
-}}>
-    {/* card content */}
-</div>
+// BlogPostPage.jsx — move the floating chat toggle when the sidebar opens
+<button
+    className={`${blogStyles.chatToggle} ${chatOpen ? blogStyles.chatToggleOpen : ''}`}
+>
+    {chatOpen ? '✕' : '💬'}
+</button>
 ```
 
-When `cardVisible` changes to `false`, the browser animates opacity and position
-over 400ms. The element still occupies space in the layout (no layout shift), but
-`pointerEvents: none` prevents any mouse interactions.
+```css
+/* blog.module.css */
+.chatToggle {
+    right: 1.5rem;
+    transition: right 0.3s ease, background 0.2s ease;
+}
+
+.chatToggleOpen {
+    right: clamp(19.75rem, calc(35% + 1rem), 31rem);
+}
+```
+
+When `chatOpen` changes, the browser animates the button position without forcing the
+component to own presentation details in JavaScript.
 
 **Tradeoff**: the element is still in the DOM when hidden — it costs memory and can
 still run effects. Only use this approach when the component is cheap and you need the
@@ -658,10 +683,14 @@ Defined in `index.css`, usable anywhere:
 <p style={{ color: 'var(--text-primary)' }}>Hello</p>
 ```
 
-When the user toggles dark mode, `ThemeContext.jsx` swaps the CSS variable values —
-every element using those variables updates automatically.
+When the user toggles dark mode, `ThemeProvider.jsx` updates the `data-theme` attribute
+on `document.body`, and every element using those CSS variables updates automatically.
 
 ### Inline styles
+
+The repo still uses inline styles occasionally for tiny one-off cases or documentation
+examples, but the current frontend direction prefers feature-owned CSS modules for
+reusable presentation.
 
 ```jsx
 <div style={{
@@ -686,11 +715,11 @@ Instead of calling `fetch()` directly in components, we centralize all API calls
 
 ```js
 // api.js
-const API_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../config/env';
 
 export const api = {
     getSeries: async () => {
-        const response = await fetch(`${API_URL}/series/`);
+        const response = await fetch(`${API_BASE_URL}/series/`);
         if (!response.ok) throw new Error('Failed to fetch series');
         return response.json();
     },
@@ -711,13 +740,13 @@ Without it, Django returns a 301 redirect which causes issues with POST requests
 
 ---
 
-## 16. Component Composition — ChatPanel + BlogPost
+## 16. Component Composition — ChatPanel + BlogPostPage
 
 **Files: `frontend/src/features/blog/pages/BlogPostPage.jsx`, `frontend/src/features/blog/components/ChatPanel.jsx`**
 
 This is the most complex UI in the project. Here's how the pieces fit:
 
-**BlogPost.jsx** (parent) controls:
+**BlogPostPage.jsx** (parent) controls:
 - Whether the chat panel is open (`chatOpen` state)
 - The split-pane flex layout
 - Passing `blogSlug` and `onClose` to ChatPanel
@@ -730,7 +759,7 @@ This is the most complex UI in the project. Here's how the pieces fit:
 
 **Data flow:**
 ```
-BlogPost
+BlogPostPage
   │
   ├─ chatOpen state → controls whether ChatPanel renders
   │
@@ -747,7 +776,7 @@ ChatPanel
 ```
 
 **Key pattern**: ChatPanel never modifies `chatOpen` directly — it calls the `onClose`
-callback that BlogPost provided. This keeps state ownership clear:
+callback that BlogPostPage provided. This keeps state ownership clear:
 "the parent that creates state should be the one that can change it."
 
 ---
@@ -901,18 +930,18 @@ export const ACTIVE_LIGHT_GAME = 'space-invaders';  // ← change this one line
 ```
 
 ```jsx
-// Archived home experiment — used the registry without changing the page module
+// Example consumer — pick the active game without importing a specific implementation
 import { GAMES, ACTIVE_LIGHT_GAME } from '../games';
 const LightGame = GAMES[ACTIVE_LIGHT_GAME];  // looks up the component at module load time
 
 // Later in JSX:
-{isDark ? <RetroScene /> : <LightGame />}
+<LightGame />
 ```
 
-This pattern is still useful in the repo as a reference, even though the current home page has moved to a lighter retro control-room design.
+This pattern is still useful in the repo as a reference, even though the current home page has moved to a lighter retro control-room design and no longer consumes the registry directly.
 
 **Why this is useful:**
-- `Home.jsx` doesn't import any specific game — it just reads from the registry
+- An experiment surface can avoid importing a specific game directly — it just reads from the registry
 - Adding a new game = create the file + add 2 lines to `index.js`
 - Switching games = change 1 line (`ACTIVE_LIGHT_GAME`) in `index.js`
 - If a game has a bug, you can swap to another instantly without touching the page
@@ -923,7 +952,7 @@ This pattern is still useful in the repo as a reference, even though the current
 - Multiple AI provider UI components (registry of provider-specific chat UIs)
 - Feature flags (registry of enabled/disabled features)
 
-The key idea: **the consumer (Home.jsx) depends on the registry, not on specific implementations**. Adding new implementations never requires changing the consumer.
+The key idea: **the consumer depends on the registry, not on specific implementations**. Adding new implementations never requires changing the consumer.
 
 ---
 
@@ -934,9 +963,9 @@ Here's the full flow when a user opens a blog post and asks a question:
 ```
 1. User visits /blogs/attention-mechanisms
    → React Router matches /blogs/:slug
-   → BlogPost component mounts with slug = "attention-mechanisms"
+    → BlogPostPage component mounts with slug = "attention-mechanisms"
 
-2. BlogPost's useEffect fires
+2. BlogPostPage's useEffect fires
    → calls api.getBlogBySlug("attention-mechanisms")
    → fetch GET http://localhost:8000/api/blogs/attention-mechanisms/
    → Django: BlogPostViewSet.retrieve() → serializes BlogPost → returns JSON

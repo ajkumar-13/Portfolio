@@ -15,7 +15,8 @@
 
 import { Link } from 'react-router-dom';
 
-import styles from '../../../styles/components.module.css';
+import shellStyles from '../../../styles/components.module.css';
+import trainingStyles from '../styles/training.module.css';
 
 // Planned features to display on the coming soon page
 const PLANNED_FEATURES = [
@@ -43,116 +44,50 @@ const PLANNED_FEATURES = [
 
 const LetsTrainPage = () => {
     return (
-        <div className="container" style={{ padding: '4rem 1.5rem' }}>
+        <div className={`container ${trainingStyles.page}`}>
 
             {/* Page Header */}
-            <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                <span className={styles.sectionLabel}>COMING SOON</span>
-                <h1 style={{
-                    fontSize: 'clamp(2rem, 5vw, 3rem)',
-                    fontWeight: '800',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                }}>
+            <header className={trainingStyles.header}>
+                <span className={shellStyles.sectionLabel}>COMING SOON</span>
+                <h1 className={trainingStyles.title}>
                     Let's Train
                 </h1>
-                <p style={{
-                    color: 'var(--text-secondary)',
-                    fontSize: '1.1rem',
-                    maxWidth: '580px',
-                    margin: '0 auto 2rem',
-                    lineHeight: 1.7,
-                }}>
+                <p className={trainingStyles.intro}>
                     An interactive playground to train reinforcement learning agents in the browser
                     — no setup, no GPU required.
                 </p>
 
                 {/* Status badge */}
-                <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    background: 'var(--bg-glass)',
-                    border: '1px solid var(--border-secondary)',
-                    borderRadius: '999px',
-                    padding: '0.4rem 1rem',
-                    fontFamily: 'monospace',
-                    fontSize: '0.8rem',
-                    color: 'var(--text-muted)',
-                }}>
+                <div className={trainingStyles.statusBadge}>
                     {/* Pulsing amber dot to indicate "in progress" status */}
-                    <span style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: '#f59e0b',
-                        display: 'inline-block',
-                        animation: 'pulse 2s infinite',
-                    }} />
+                    <span className={trainingStyles.statusDot} />
                     In Development
                 </div>
             </header>
 
             {/* Planned Features Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: '1.25rem',
-                maxWidth: '900px',
-                margin: '0 auto 4rem',
-            }}>
+            <div className={trainingStyles.featuresGrid}>
                 {PLANNED_FEATURES.map(feature => (
-                    <div
-                        key={feature.title}
-                        style={{
-                            background: 'var(--bg-glass)',
-                            border: '1px solid var(--border-secondary)',
-                            borderRadius: 'var(--radius-lg)',
-                            padding: '1.5rem',
-                            opacity: 0.85, // Slightly dimmed to reinforce "not yet available"
-                        }}
-                    >
-                        <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>
+                    <article key={feature.title} className={trainingStyles.featureCard}>
+                        <div className={trainingStyles.featureIcon}>
                             {feature.icon}
                         </div>
-                        <h3 style={{
-                            fontSize: '1.05rem',
-                            fontWeight: '600',
-                            color: 'var(--text-primary)',
-                            marginBottom: '0.5rem',
-                        }}>
+                        <h3 className={trainingStyles.featureTitle}>
                             {feature.title}
                         </h3>
-                        <p style={{
-                            color: 'var(--text-secondary)',
-                            fontSize: '0.9rem',
-                            lineHeight: 1.6,
-                            margin: 0,
-                        }}>
+                        <p className={trainingStyles.featureDescription}>
                             {feature.description}
                         </p>
-                    </div>
+                    </article>
                 ))}
             </div>
 
             {/* Blog CTA — drive users to read related content while they wait */}
-            <div style={{
-                textAlign: 'center',
-                padding: '2rem',
-                background: 'var(--bg-glass)',
-                border: '1px solid var(--border-secondary)',
-                borderRadius: 'var(--radius-lg)',
-                maxWidth: '500px',
-                margin: '0 auto',
-            }}>
-                <p style={{
-                    color: 'var(--text-secondary)',
-                    marginBottom: '1rem',
-                    fontSize: '0.95rem',
-                }}>
+            <div className={trainingStyles.callout}>
+                <p className={trainingStyles.calloutText}>
                     While you wait, explore the blog for deep-dives into the algorithms that will power this playground.
                 </p>
-                <Link to="/blogs" className={styles.btnPrimary}>
+                <Link to="/blogs" className={shellStyles.btnPrimary}>
                     Read the Blog
                 </Link>
             </div>

@@ -347,3 +347,96 @@ New entries are appended at the bottom. Never remove entries.
 - The app shell now better matches the production-minded direction already established in the home feature.
 - Phase 2 has reduced another major source of prototype-style inline UI code.
 - The frontend frame is more honest, more maintainable, and easier to evolve as a cohesive design system.
+
+---
+
+## Entry #008 — Phase 2 Feature Page Style Extraction
+
+**Date:** 2026-04-06
+**Goal:** Continue Phase 2 by removing the remaining large page-level inline style systems from the projects, training, and blog features.
+
+### Steps Taken
+
+1. Added feature-owned CSS modules for `projects`, `training`, and `blog` so those routes no longer depend on large inline presentation blocks inside page components.
+2. Refactored `ProjectsPage.jsx` to move card layout, featured badges, tech tags, and hover states into `frontend/src/features/projects/styles/projects.module.css`.
+3. Refactored `LetsTrainPage.jsx` to move the status badge, feature grid, and CTA panel into `frontend/src/features/training/styles/training.module.css`.
+4. Refactored `BlogsPage.jsx` and `BlogSeriesPage.jsx` to move loading states, card grids, list layouts, and empty states into `frontend/src/features/blog/styles/blog.module.css`.
+5. Reworked `BlogPostPage.jsx` so the article frame, cover image, footer, floating chat toggle, and chat sidebar layout are now CSS-driven instead of controlled by inline style objects.
+6. Replaced the blog-series cover image background hack with a real `img` element so the card media path is simpler and more semantic.
+7. Added responsive blog-post layout rules so the AI chat panel degrades more cleanly on narrower viewports instead of relying entirely on the original desktop flex arrangement.
+
+### Expected Benefits
+
+- Lower maintenance cost because feature-page layout changes now happen in feature-owned stylesheets instead of long JSX style objects.
+- Better consistency with the rest of the Phase 2 frontend direction, which has already moved the home feature and shell away from prototype-style inline presentation.
+- Cleaner component code because the pages now focus more on data flow and route structure than raw visual styling.
+- Better extensibility because the new CSS modules give each feature a clear place to evolve responsive rules and visual states.
+
+### Problems Faced
+
+- The remaining inline-style debt was spread across several unrelated route surfaces, so this pass needed to introduce local style systems without accidentally creating another oversized shared stylesheet.
+- `BlogPostPage.jsx` mixed article layout and floating chat chrome in one place, which meant the refactor had to preserve the existing interaction while moving those layout decisions fully into CSS.
+
+### Validation
+
+1. Frontend editor diagnostics:
+	- Result: passed. No errors remained in the updated feature pages or the new CSS modules.
+2. Frontend production build:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed with no chunk-size warning.
+3. Build outcome:
+	- The new feature-local CSS output is split cleanly into `ProjectsPage` at about 2.06 kB, `LetsTrainPage` at about 1.57 kB, and `blog` at about 4.56 kB.
+	- The route JavaScript chunks remained small, with `ProjectsPage` at about 3.31 kB, `LetsTrainPage` at about 2.30 kB, `BlogsPage` at about 2.39 kB, `BlogSeriesPage` at about 1.79 kB, and `BlogPostPage` at about 3.44 kB.
+
+### System Benefit After This Entry
+
+- The biggest remaining page-level inline styling debt is now removed from the active frontend.
+- Phase 2 has pushed the feature pages closer to the same standard already established for the homepage and shell.
+- The frontend is easier to maintain because feature styling now lives with feature code instead of being embedded in render logic.
+
+---
+
+## Entry #009 — Phase 2 Blog State Consolidation And Frontend Maintenance
+
+**Date:** 2026-04-06
+**Goal:** Finish the next frontend maintenance pass by consolidating repeated blog state surfaces, aligning the teaching docs with the current architecture, and clearing the remaining frontend npm advisories.
+
+### Steps Taken
+
+1. Added `BlogStateView.jsx` and `BlogEmptyState.jsx` under `frontend/src/features/blog/components/` so the blog routes no longer repeat near-identical loading, error, and empty-state markup.
+2. Refactored `BlogsPage.jsx`, `BlogSeriesPage.jsx`, and `BlogPostPage.jsx` to use those shared blog state components instead of hand-written route-level state shells.
+3. Updated `frontend/src/features/blog/styles/blog.module.css` so the shared empty-state component can handle both CTA-heavy and text-only cases cleanly.
+4. Refreshed the frontend structure section in `README.md` so it reflects the current feature-owned components and style directories.
+5. Updated `docs/react_guide.md` to match the active frontend architecture, including the app shell/router split, `ThemeProvider`, feature-page paths, `BlogPostPage` naming, the extracted blog state components, and the archived status of the game-registry pattern.
+6. Ran `npm audit` on the frontend, identified the remaining transitive `rollup` and `picomatch` advisories, and applied `npm audit fix` to update the vulnerable locked dependency versions in `frontend/package-lock.json`.
+
+### Expected Benefits
+
+- Lower maintenance cost in the blog feature because route pages now share a small, explicit state-surface layer.
+- More accurate onboarding and teaching docs because the React guide and README now describe the code that actually exists in the repo.
+- Better supply-chain hygiene because the remaining frontend npm audit findings are now cleared without changing the public app behavior.
+
+### Problems Faced
+
+- The React guide still carried several stale references to the earlier flat page structure, so the documentation pass needed to preserve the teaching flow while replacing outdated file names and examples.
+- `npm audit fix` completed successfully on Windows but emitted an `EPERM` cleanup warning while replacing an old Rollup native binary directory; the remediation still applied and the follow-up audit returned zero vulnerabilities.
+
+### Validation
+
+1. Frontend editor diagnostics:
+	- Result: passed. No errors remained in the new blog components or the updated docs files.
+2. Frontend production build after blog state consolidation:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed.
+3. Frontend production build after docs and dependency maintenance:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed again with no chunk-size warning.
+4. Frontend npm audit:
+	- Command: `Push-Location frontend; npm audit --json; Pop-Location`
+	- Result: passed with `0` total vulnerabilities.
+
+### System Benefit After This Entry
+
+- The blog feature now has a cleaner internal UI contract for route states.
+- The repo documentation is back in sync with the current Phase 2 frontend structure.
+- The frontend dependency tree is cleaner from a security posture perspective, with the prior audit findings removed.

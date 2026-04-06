@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+import BlogEmptyState from '../components/BlogEmptyState';
+import BlogStateView from '../components/BlogStateView';
 import { api } from '../../../shared/api/api';
 import { DJANGO_ADMIN_URL } from '../../../shared/config/env';
-import styles from '../../../styles/components.module.css';
+import shellStyles from '../../../styles/components.module.css';
+import blogStyles from '../styles/blog.module.css';
 
 /**
  * Blogs Page Component
@@ -33,73 +37,51 @@ const BlogsPage = () => {
     }, []);
 
     if (loading) {
-        return (
-            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
-                <p style={{ color: 'var(--text-secondary)' }}>Loading blog series...</p>
-            </div>
-        );
+        return <BlogStateView icon="⏳" message="Loading blog series..." />;
     }
 
     if (error) {
-        return (
-            <div className="container" style={{ textAlign: 'center', padding: '4rem 0' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>❌</div>
-                <p style={{ color: 'var(--text-secondary)' }}>{error}</p>
-            </div>
-        );
+        return <BlogStateView icon="❌" message={error} />;
     }
 
     return (
         <div className="container">
             {/* Page Header */}
-            <div className={styles.sectionHeader} style={{ paddingTop: '2rem' }}>
-                <span className={styles.sectionLabel}>📖 Blog</span>
-                <h1 className={styles.sectionTitle}>
+            <div className={`${shellStyles.sectionHeader} ${blogStyles.pageHeader}`}>
+                <span className={shellStyles.sectionLabel}>📖 Blog</span>
+                <h1 className={shellStyles.sectionTitle}>
                     Thoughts & <span className="gradient-text">Tutorials</span>
                 </h1>
-                <p className={styles.sectionDescription}>
+                <p className={shellStyles.sectionDescription}>
                     Deep dives into AI/ML concepts, tutorials, and my learning journey
                 </p>
             </div>
 
             {/* Series Grid */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-                gap: '2rem',
-                padding: '2rem 0 4rem'
-            }}>
-                {series.map(s => (
-                    <Link key={s.id} to={`/blogs/series/${s.id}`} style={{ textDecoration: 'none' }}>
-                        <article className={styles.card}>
-                            {s.cover_image && (
-                                <div
-                                    className={styles.cardImage}
-                                    style={{
-                                        backgroundImage: `url(${api.getImageUrl(s.cover_image)})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
-                                    }}
+            <div className={blogStyles.seriesGrid}>
+                {series.map((seriesItem) => (
+                    <Link key={seriesItem.id} to={`/blogs/series/${seriesItem.id}`} className={blogStyles.seriesCardLink}>
+                        <article className={`${shellStyles.card} ${blogStyles.seriesCard}`}>
+                            {seriesItem.cover_image && (
+                                <img
+                                    src={api.getImageUrl(seriesItem.cover_image)}
+                                    alt={seriesItem.title}
+                                    className={`${shellStyles.cardImage} ${blogStyles.seriesCardImage}`}
                                 />
                             )}
-                            {!s.cover_image && (
-                                <div className={styles.cardImage} style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    background: 'var(--gradient-glow)',
-                                    fontSize: '3rem'
-                                }}>
+                            {!seriesItem.cover_image && (
+                                <div
+                                    className={`${shellStyles.cardImage} ${blogStyles.seriesPlaceholder}`}
+                                >
                                     📚
                                 </div>
                             )}
-                            <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>{s.title}</h2>
-                                <p className={styles.cardExcerpt}>{s.description}</p>
-                                <div className={styles.cardMeta}>
-                                    <span>📝 {s.post_count || 0} articles</span>
-                                    <span style={{ color: 'var(--accent-primary)' }}>Read Series →</span>
+                            <div className={shellStyles.cardContent}>
+                                <h2 className={shellStyles.cardTitle}>{seriesItem.title}</h2>
+                                <p className={shellStyles.cardExcerpt}>{seriesItem.description}</p>
+                                <div className={shellStyles.cardMeta}>
+                                    <span>📝 {seriesItem.post_count || 0} articles</span>
+                                    <span className={blogStyles.metaAction}>Read Series →</span>
                                 </div>
                             </div>
                         </article>
@@ -109,25 +91,20 @@ const BlogsPage = () => {
 
             {/* Empty State */}
             {series.length === 0 && (
-                <div className="glass-card" style={{
-                    textAlign: 'center',
-                    padding: '4rem 2rem',
-                    marginBottom: '4rem'
-                }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📝</div>
-                    <h3 style={{ marginBottom: '0.5rem' }}>No Blog Series Yet</h3>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                        Create your first series in the Admin panel to get started.
-                    </p>
+                <BlogEmptyState
+                    icon="📝"
+                    title="No Blog Series Yet"
+                    message="Create your first series in the Admin panel to get started."
+                >
                     <a
                         href={DJANGO_ADMIN_URL}
                         target="_blank"
                         rel="noreferrer"
-                        className={styles.btnPrimary}
+                        className={shellStyles.btnPrimary}
                     >
                         Open Django Admin
                     </a>
-                </div>
+                </BlogEmptyState>
             )}
         </div>
     );
