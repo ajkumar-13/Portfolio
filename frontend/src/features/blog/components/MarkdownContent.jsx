@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
 
-const contentStyle = {
-    fontSize: '1.125rem',
-    lineHeight: 1.8,
-    color: 'var(--text-primary)',
-};
-
 const MarkdownContent = ({ content }) => {
     const [html, setHtml] = useState('');
     const [isRendering, setIsRendering] = useState(true);
@@ -52,8 +46,8 @@ const MarkdownContent = ({ content }) => {
 
     if (isRendering) {
         return (
-            <div style={contentStyle}>
-                <p style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+            <div className="markdown-shell">
+                <p className="markdown-state markdown-state-mono">
                     Rendering article...
                 </p>
             </div>
@@ -62,8 +56,8 @@ const MarkdownContent = ({ content }) => {
 
     if (renderFailed) {
         return (
-            <div style={contentStyle}>
-                <p style={{ color: 'var(--text-secondary)' }}>
+            <div className="markdown-shell">
+                <p className="markdown-state">
                     Failed to render the article content.
                 </p>
             </div>
@@ -72,8 +66,7 @@ const MarkdownContent = ({ content }) => {
 
     return (
         <div
-            className="markdown-content"
-            style={contentStyle}
+            className="markdown-content markdown-shell"
             dangerouslySetInnerHTML={{ __html: html }}
         />
     );

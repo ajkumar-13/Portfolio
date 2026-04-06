@@ -4,11 +4,11 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * WHAT THIS FILE DOES
  * ─────────────────────────────────────────────────────────────────────────────
- * This is the single source of truth for which retro game appears as the
- * light-mode background on the Home page.
+ * This is the single source of truth for archived or optional retro game
+ * experiments that may be embedded elsewhere in the frontend.
  *
- * Home.jsx imports GAMES and ACTIVE_LIGHT_GAME from here and never needs to
- * change when you add or switch games — only this file changes.
+ * The current Home page does not consume this registry directly anymore, but
+ * the registry pattern is kept as a lightweight reference and experiment hook.
  *
  * HOW TO ADD A NEW GAME:
  *   1. Create:  frontend/src/games/MyGame.jsx
@@ -18,7 +18,7 @@
  *   3. Register: add  'my-game': MyGame  to the GAMES object
  *   4. Activate: set  ACTIVE_LIGHT_GAME = 'my-game'
  *
- * HOW TO SWITCH GAMES:
+ * HOW TO SWITCH THE ACTIVE EXPERIMENT:
  *   Change ACTIVE_LIGHT_GAME to any key that exists in GAMES.
  *   That's the only line you need to touch.
  * ─────────────────────────────────────────────────────────────────────────────

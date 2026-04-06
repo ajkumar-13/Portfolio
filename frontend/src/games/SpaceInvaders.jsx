@@ -37,6 +37,8 @@
 
 import { useRef, useEffect } from 'react';
 
+import styles from './spaceInvaders.module.css';
+
 // ── Colour palette ─────────────────────────────────────────────────────────────
 // These are literal hex values matching the light-mode CSS variables.
 // Canvas context methods don't read CSS variables — we must use literals.
@@ -181,7 +183,16 @@ const SpaceInvadersGame = () => {
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        const ctx    = canvas.getContext('2d');
+
+        if (!canvas) {
+            return undefined;
+        }
+
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+            return undefined;
+        }
 
         // ── Resize handler ─────────────────────────────────────────────────────
         // Keeps canvas pixels in sync with its CSS size.
@@ -228,7 +239,8 @@ const SpaceInvadersGame = () => {
     return (
         <canvas
             ref={canvasRef}
-            style={{ width: '100%', height: '100%', display: 'block' }}
+            className={styles.canvas}
+            aria-label="Space Invaders experimental canvas game"
         />
     );
 };

@@ -440,3 +440,132 @@ New entries are appended at the bottom. Never remove entries.
 - The blog feature now has a cleaner internal UI contract for route states.
 - The repo documentation is back in sync with the current Phase 2 frontend structure.
 - The frontend dependency tree is cleaner from a security posture perspective, with the prior audit findings removed.
+
+---
+
+## Entry #010 — Phase 2 Chat Surface And Legacy UI Cleanup
+
+**Date:** 2026-04-06
+**Goal:** Continue Phase 2 by removing the remaining large inline-style block from the active blog chat UI, tightening the app-level fallback surfaces, and deleting an unused legacy page path.
+
+### Steps Taken
+
+1. Added `frontend/src/features/blog/components/chatPanel.module.css` so the active blog chat UI now has a dedicated component-level style surface instead of a large inline style object.
+2. Refactored `frontend/src/features/blog/components/ChatPanel.jsx` to use that CSS module for header chrome, message layout, input state, hover/focus behavior, loading surfaces, and message bubble variants.
+3. Removed the inline `onMouseEnter`, `onMouseLeave`, `onFocus`, and `onBlur` presentation hooks from `ChatPanel.jsx` by moving those behaviors into CSS selectors.
+4. Added `frontend/src/app/appStatus.module.css` and refactored `frontend/src/app/RouteFallback.jsx` plus `frontend/src/app/AppErrorBoundary.jsx` to use shared app-level status styles instead of inline layout and button styling.
+5. Deleted the orphaned `frontend/src/pages/Work.jsx` file, which was no longer routed or imported and still carried stale FastAPI-era portfolio copy.
+6. Removed the now-empty `frontend/src/pages/` directory so the repo no longer suggests a live flat-page architecture that the app does not use.
+
+### Expected Benefits
+
+- Lower maintenance cost because the active blog chat surface is now styled the same way as the rest of the refactored frontend.
+- Cleaner app recovery surfaces because route loading and render-failure states now share stable CSS instead of one-off inline layout blocks.
+- Less architectural drift because an unused legacy page path and its stale content are now gone rather than left in the tree to confuse future work.
+
+### Problems Faced
+
+- `ChatPanel.jsx` mixed layout, interaction, and visual states in one large file, so the refactor needed to preserve behavior while moving multiple dynamic states into CSS selectors and class combinations.
+- The first all-in-one patch attempt did not match `ChatPanel.jsx` cleanly, so the change was reapplied in smaller controlled patches: style modules first, then component replacement, then shell cleanup.
+
+### Validation
+
+1. Frontend editor diagnostics:
+	- Result: passed. No errors remained in `ChatPanel.jsx`, `chatPanel.module.css`, `RouteFallback.jsx`, `AppErrorBoundary.jsx`, or `appStatus.module.css`.
+2. Targeted inline-style check:
+	- Result: passed. `ChatPanel.jsx`, `RouteFallback.jsx`, and `AppErrorBoundary.jsx` no longer contain `style={{ ... }}` blocks or inline hover handlers.
+3. Frontend production build:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed with no chunk-size warning.
+4. Build outcome:
+	- `ChatPanel` now emits its own CSS chunk at about 3.66 kB and a JavaScript chunk at about 3.41 kB.
+	- `BlogPostPage` remains lean at about 3.32 kB of JavaScript, while the main `index` chunk remains about 14.55 kB.
+
+### System Benefit After This Entry
+
+- The biggest remaining active inline-style block in the shipping blog experience is now gone.
+- The app shell handles route loading and render failures with cleaner, more maintainable UI code.
+- The frontend tree is more honest because the old flat `src/pages` surface has been removed.
+
+---
+
+## Entry #011 — Phase 2 Markdown Rendering Surface Cleanup
+
+**Date:** 2026-04-06
+**Goal:** Continue Phase 2 by removing the last remaining inline style usage from the active Markdown rendering surface in the blog feature.
+
+### Steps Taken
+
+1. Removed the shared `contentStyle` inline object from `frontend/src/features/blog/components/MarkdownContent.jsx`.
+2. Replaced the component's loading and render-failure inline text styles with class-based markup.
+3. Extended `frontend/src/styles/markdown.css` with `markdown-shell`, `markdown-state`, and `markdown-state-mono` so the rendered article surface and its transient states now share stylesheet-driven presentation.
+4. Kept the rendered article body on the existing `markdown-content` path so the refactor only changed presentation ownership, not the rendering pipeline or HTML output shape.
+
+### Expected Benefits
+
+- Lower maintenance cost because the blog renderer no longer mixes small visual decisions into component logic.
+- Better consistency with the rest of the Phase 2 cleanup, which has been steadily moving active frontend surfaces away from inline style objects.
+- Cleaner future iteration on article typography and renderer states because those concerns now live in the Markdown stylesheet.
+
+### Problems Faced
+
+- This was a small cleanup slice, but it needed to stay aligned with the existing global Markdown stylesheet rather than introduce another parallel styling system for one component.
+
+### Validation
+
+1. Frontend editor diagnostics:
+	- Result: passed. No errors remained in `MarkdownContent.jsx` or `markdown.css`.
+2. Targeted inline-style check:
+	- Result: passed. `MarkdownContent.jsx` no longer contains `style={{ ... }}` blocks.
+3. Frontend production build:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed with no chunk-size warning.
+4. Build outcome:
+	- `BlogPostPage` remained lean at about 3.28 kB of JavaScript.
+	- The shared `index` CSS bundle increased slightly to about 17.63 kB because the Markdown surface now owns those presentation classes in CSS instead of inline JSX.
+
+### System Benefit After This Entry
+
+- The active blog reading surface is now more stylistically consistent with the rest of the refactored frontend.
+- Another small piece of render-time presentation logic has been moved out of JSX and into CSS where it belongs.
+- Phase 2 has reduced the remaining active inline-style debt even further without changing behavior.
+
+---
+
+## Entry #012 — Phase 2 Archived Game Surface Hardening
+
+**Date:** 2026-04-07
+**Goal:** Continue Phase 2 by tightening the archived retro game surface so the remaining experiment code better matches the current frontend standards.
+
+### Steps Taken
+
+1. Added `frontend/src/games/spaceInvaders.module.css` so the archived `SpaceInvaders` canvas no longer relies on an inline style object for sizing and display.
+2. Refactored `frontend/src/games/SpaceInvaders.jsx` to use the new CSS module and added a defensive early return if the canvas element or 2D rendering context is unavailable.
+3. Added an `aria-label` to the `SpaceInvaders` canvas so the experimental surface has a clearer accessibility description.
+4. Updated `frontend/src/games/index.js` comments so the registry is documented as an archived or optional experiment surface rather than as an active Home-page dependency.
+
+### Expected Benefits
+
+- Lower maintenance cost because even the archived game surface now follows the same CSS-driven presentation direction as the active frontend.
+- Better resilience because the game setup no longer assumes the canvas and rendering context are always available.
+- Less architectural drift because the registry comments now describe how the repo actually works today rather than how the old homepage experiment worked.
+
+### Problems Faced
+
+- This pass was intentionally small because the game surface is archived, so the work needed to improve correctness and maintainability without reopening the old experimental design path.
+
+### Validation
+
+1. Frontend editor diagnostics:
+	- Result: passed. No errors remained in `SpaceInvaders.jsx`, `spaceInvaders.module.css`, or `games/index.js`.
+2. Targeted inline-style check:
+	- Result: passed. `SpaceInvaders.jsx` no longer contains `style={{ ... }}`.
+3. Frontend production build:
+	- Command: `Push-Location frontend; npm run build; Pop-Location`
+	- Result: passed with no chunk-size warning.
+
+### System Benefit After This Entry
+
+- The remaining archived experiment code is more honest and easier to maintain.
+- Another leftover inline-style surface has been removed from the frontend tree.
+- Phase 2 now leaves even the optional retro game path in a cleaner, more defensible state.

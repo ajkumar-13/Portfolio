@@ -1,0 +1,223 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-left: 1px solid var(--border-secondary);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    background: var(--bg-secondary);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-secondary);
+    background: var(--bg-primary);
+    flex-shrink: 0;
+}
+
+.headerMain {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.liveDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+}
+
+.titleBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.title {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.provider {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+}
+
+.closeButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.closeButton:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.messageList {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.errorBanner {
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: 8px;
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    font-size: 0.85rem;
+}
+
+.inputArea {
+    padding: 1rem;
+    border-top: 1px solid var(--border-secondary);
+    background: var(--bg-primary);
+    flex-shrink: 0;
+}
+
+.inputRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.input {
+    flex: 1;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-secondary);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 1px var(--accent-primary);
+}
+
+.input:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.sendButton {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-end;
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent-primary);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.sendButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.sendButton:disabled {
+    background: var(--border-secondary);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.helperText {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.messageRow {
+    display: flex;
+}
+
+.messageRowUser {
+    justify-content: flex-end;
+}
+
+.messageRowAssistant {
+    justify-content: flex-start;
+}
+
+.messageBubble {
+    max-width: 85%;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.messageBubbleUser {
+    border-radius: 16px 16px 4px 16px;
+    background: var(--accent-primary);
+    color: #fff;
+}
+
+.messageBubbleAssistant {
+    border: 1px solid var(--border-secondary);
+    border-radius: 16px 16px 16px 4px;
+    background: var(--bg-glass);
+    color: var(--text-primary);
+}
+
+.messageBubbleLoading {
+    opacity: 0.6;
+}
+
+.loadingDots {
+    font-family: var(--font-mono);
+    letter-spacing: 2px;
+}
+
+@media (max-width: 1100px) {
+    .root {
+        border-left: none;
+        border-radius: var(--radius-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    .header,
+    .messageList,
+    .inputArea {
+        padding-left: 0.875rem;
+        padding-right: 0.875rem;
+    }
+}

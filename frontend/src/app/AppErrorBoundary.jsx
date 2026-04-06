@@ -1,5 +1,7 @@
 import { Component } from 'react';
 
+import styles from './appStatus.module.css';
+
 class AppErrorBoundary extends Component {
     constructor(props) {
         super(props);
@@ -27,49 +29,19 @@ class AppErrorBoundary extends Component {
         }
 
         return (
-            <div className="container" style={{ padding: '5rem 1.5rem' }}>
-                <div
-                    className="glass-card"
-                    style={{
-                        maxWidth: '640px',
-                        margin: '0 auto',
-                        padding: '2rem',
-                        textAlign: 'center',
-                    }}
-                >
-                    <p
-                        style={{
-                            fontFamily: 'monospace',
-                            fontSize: '0.8rem',
-                            color: 'var(--text-muted)',
-                            letterSpacing: '0.12em',
-                            marginBottom: '0.75rem',
-                        }}
-                    >
+            <div className={`container ${styles.page} ${styles.pageSpacious}`}>
+                <div className={`glass-card ${styles.card} ${styles.cardWide}`}>
+                    <p className={styles.eyebrow}>
                         APPLICATION ERROR
                     </p>
-                    <h1 style={{ marginBottom: '0.75rem' }}>Something broke while rendering the page.</h1>
-                    <p
-                        style={{
-                            color: 'var(--text-secondary)',
-                            marginBottom: '1.5rem',
-                            lineHeight: 1.7,
-                        }}
-                    >
+                    <h1 className={styles.title}>Something broke while rendering the page.</h1>
+                    <p className={`${styles.message} ${styles.messageWithAction}`}>
                         {this.state.errorMessage || 'Reload the app and try again.'}
                     </p>
                     <button
                         type="button"
                         onClick={this.handleReload}
-                        style={{
-                            border: 'none',
-                            borderRadius: '999px',
-                            padding: '0.85rem 1.4rem',
-                            background: 'var(--accent-primary)',
-                            color: '#fff',
-                            cursor: 'pointer',
-                            fontWeight: '600',
-                        }}
+                        className={styles.actionButton}
                     >
                         Reload Application
                     </button>

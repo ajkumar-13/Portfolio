@@ -8,6 +8,20 @@
     color: var(--text-primary);
 }
 
+.markdown-shell {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.markdown-state {
+    color: var(--text-secondary);
+}
+
+.markdown-state-mono {
+    font-family: var(--font-mono);
+}
+
 /* Headings */
 .markdown-content h1,
 .markdown-content h2,

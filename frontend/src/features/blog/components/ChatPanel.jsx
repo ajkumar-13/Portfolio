@@ -29,7 +29,9 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+
 import { api } from '../../../shared/api/api';
+import styles from './chatPanel.module.css';
 
 /**
  * ChatPanel Component
@@ -98,7 +100,7 @@ const ChatPanel = ({ blogSlug, onClose }) => {
         // Add user message to the displayed messages
         // Functional update pattern: setMessages(prev => [...prev, newItem])
         // We use the function form to ensure we're working with the latest state.
-        setMessages(prev => [...prev, userMessage]);
+        setMessages((previousMessages) => [...previousMessages, userMessage]);
 
         try {
             // Build history: all previous messages EXCEPT the first welcome message,
@@ -106,22 +108,21 @@ const ChatPanel = ({ blogSlug, onClose }) => {
             // We also exclude the message we just added (it's passed separately).
             const history = messages
                 .slice(1) // Skip the initial welcome message (index 0)
-                .filter(m => m.content !== '...'); // Skip placeholder messages
+                .filter((message) => message.content !== '...'); // Skip placeholder messages
 
             // Call the Django API → Claude API chain
             const data = await api.chatWithBlog(blogSlug, trimmed, history);
 
             // Add the AI's response to the messages list
-            setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+            setMessages((previousMessages) => [...previousMessages, { role: 'assistant', content: data.reply }]);
 
             // Show which provider answered (backend returns this in data.provider)
             if (data.provider) setActiveProvider(data.provider);
-
         } catch (err) {
             setError(err.message);
             // Remove the user's message if we couldn't get a response
             // so the conversation stays consistent
-            setMessages(prev => prev.slice(0, -1));
+            setMessages((previousMessages) => previousMessages.slice(0, -1));
         } finally {
             // This runs whether the try succeeded or the catch ran.
             // Always stop loading when the operation is complete.
@@ -133,59 +134,28 @@ const ChatPanel = ({ blogSlug, onClose }) => {
      * Handle Enter key press in the input field.
      * Shift+Enter adds a newline; plain Enter submits the message.
      */
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); // Prevent the default newline behavior
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault(); // Prevent the default newline behavior
             sendMessage();
         }
     };
 
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            background: 'var(--bg-secondary)',
-            borderLeft: '1px solid var(--border-secondary)',
-            borderRadius: '0 var(--radius-lg) var(--radius-lg) 0',
-            overflow: 'hidden',
-        }}>
+        <div className={styles.root}>
 
             {/* ── Header ──────────────────────────────────────────────────── */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '1rem 1.25rem',
-                borderBottom: '1px solid var(--border-secondary)',
-                background: 'var(--bg-primary)',
-                flexShrink: 0, // Don't shrink — keep header full width
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className={styles.header}>
+                <div className={styles.headerMain}>
                     {/* Simple pulsing dot to indicate the AI is "live" */}
-                    <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: 'var(--accent-primary)',
-                        animation: 'pulse 2s infinite',
-                    }} />
-                    <div>
-                        <span style={{
-                            fontWeight: '600',
-                            fontSize: '0.9rem',
-                            color: 'var(--text-primary)',
-                            display: 'block',
-                        }}>
+                    <div className={styles.liveDot} />
+                    <div className={styles.titleBlock}>
+                        <span className={styles.title}>
                             Ask about this post
                         </span>
                         {/* Show which AI provider is active, once a reply has been received */}
                         {activeProvider && (
-                            <span style={{
-                                fontSize: '0.7rem',
-                                color: 'var(--text-muted)',
-                                fontFamily: 'monospace',
-                            }}>
+                            <span className={styles.provider}>
                                 via {activeProvider}
                             </span>
                         )}
@@ -194,20 +164,9 @@ const ChatPanel = ({ blogSlug, onClose }) => {
 
                 {/* Close button — calls the onClose prop function */}
                 <button
+                    type="button"
                     onClick={onClose}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: 'var(--text-muted)',
-                        fontSize: '1.2rem',
-                        lineHeight: 1,
-                        padding: '0.25rem',
-                        borderRadius: '4px',
-                        transition: 'color 0.2s',
-                    }}
-                    onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
-                    onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
+                    className={styles.closeButton}
                     aria-label="Close chat"
                 >
                     ✕
@@ -215,17 +174,10 @@ const ChatPanel = ({ blogSlug, onClose }) => {
             </div>
 
             {/* ── Messages List ────────────────────────────────────────────── */}
-            <div style={{
-                flex: 1,         // Takes up all remaining vertical space
-                overflowY: 'auto', // Enables scrolling when messages overflow
-                padding: '1rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-            }}>
+            <div className={styles.messageList}>
                 {/* Render each message */}
-                {messages.map((msg, index) => (
-                    <MessageBubble key={index} role={msg.role} content={msg.content} />
+                {messages.map((message, index) => (
+                    <MessageBubble key={index} role={message.role} content={message.content} />
                 ))}
 
                 {/* Loading indicator shown while waiting for AI response */}
@@ -235,14 +187,7 @@ const ChatPanel = ({ blogSlug, onClose }) => {
 
                 {/* Error message if something went wrong */}
                 {error && (
-                    <div style={{
-                        padding: '0.75rem 1rem',
-                        background: 'rgba(220, 38, 38, 0.1)',
-                        border: '1px solid rgba(220, 38, 38, 0.3)',
-                        borderRadius: '8px',
-                        color: '#dc2626',
-                        fontSize: '0.85rem',
-                    }}>
+                    <div className={styles.errorBanner}>
                         Error: {error}
                     </div>
                 )}
@@ -252,71 +197,34 @@ const ChatPanel = ({ blogSlug, onClose }) => {
             </div>
 
             {/* ── Input Area ───────────────────────────────────────────────── */}
-            <div style={{
-                padding: '1rem',
-                borderTop: '1px solid var(--border-secondary)',
-                background: 'var(--bg-primary)',
-                flexShrink: 0,
-            }}>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className={styles.inputArea}>
+                <div className={styles.inputRow}>
                     <textarea
                         value={input}
-                        onChange={e => setInput(e.target.value)}
+                        onChange={(event) => setInput(event.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder="Ask about this article... (Enter to send)"
                         disabled={loading}
                         rows={2}
-                        style={{
-                            flex: 1,
-                            padding: '0.65rem 0.85rem',
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-secondary)',
-                            borderRadius: '8px',
-                            color: 'var(--text-primary)',
-                            fontSize: '0.875rem',
-                            resize: 'none',
-                            outline: 'none',
-                            fontFamily: 'inherit',
-                            lineHeight: 1.5,
-                            transition: 'border-color 0.2s',
-                        }}
-                        onFocus={e => e.target.style.borderColor = 'var(--accent-primary)'}
-                        onBlur={e => e.target.style.borderColor = 'var(--border-secondary)'}
+                        className={styles.input}
                     />
                     <button
+                        type="button"
                         onClick={sendMessage}
                         disabled={loading || !input.trim()}
-                        style={{
-                            padding: '0.65rem 1rem',
-                            background: loading || !input.trim()
-                                ? 'var(--border-secondary)'
-                                : 'var(--accent-primary)',
-                            border: 'none',
-                            borderRadius: '8px',
-                            color: 'white',
-                            cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-                            fontSize: '1rem',
-                            transition: 'background 0.2s',
-                            alignSelf: 'flex-end',
-                        }}
+                        className={styles.sendButton}
                         aria-label="Send message"
                     >
                         {loading ? '⏳' : '↑'}
                     </button>
                 </div>
-                <p style={{
-                    marginTop: '0.5rem',
-                    fontSize: '0.7rem',
-                    color: 'var(--text-muted)',
-                    textAlign: 'center',
-                }}>
+                <p className={styles.helperText}>
                     Answers are based on this article's content
                 </p>
             </div>
         </div>
     );
 };
-
 
 /**
  * MessageBubble — renders a single chat message.
@@ -333,28 +241,11 @@ const MessageBubble = ({ role, content, isLoading }) => {
     const isUser = role === 'user';
 
     return (
-        <div style={{
-            display: 'flex',
-            justifyContent: isUser ? 'flex-end' : 'flex-start',
-        }}>
-            <div style={{
-                maxWidth: '85%',
-                padding: '0.65rem 0.9rem',
-                borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                background: isUser
-                    ? 'var(--accent-primary)'
-                    : 'var(--bg-glass)',
-                color: isUser ? 'white' : 'var(--text-primary)',
-                fontSize: '0.875rem',
-                lineHeight: 1.6,
-                border: isUser ? 'none' : '1px solid var(--border-secondary)',
-                // Preserve whitespace and line breaks in the AI's response
-                whiteSpace: 'pre-wrap',
-                opacity: isLoading ? 0.6 : 1,
-            }}>
+        <div className={`${styles.messageRow} ${isUser ? styles.messageRowUser : styles.messageRowAssistant}`}>
+            <div className={`${styles.messageBubble} ${isUser ? styles.messageBubbleUser : styles.messageBubbleAssistant} ${isLoading ? styles.messageBubbleLoading : ''}`}>
                 {isLoading ? (
                     // Simple animated "thinking" indicator
-                    <span style={{ fontFamily: 'monospace', letterSpacing: '2px' }}>
+                    <span className={styles.loadingDots}>
                         ···
                     </span>
                 ) : (
