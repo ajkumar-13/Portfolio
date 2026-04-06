@@ -32,9 +32,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+admin.site.site_url = settings.FRONTEND_URL
+
 urlpatterns = [
     # Django's built-in admin panel — always at /admin/
     path('admin/', admin.site.urls),
+
+    # Health endpoint for uptime checks and basic readiness probes.
+    path('health/', include('core.urls')),
 
     # All blog API endpoints: /api/series/, /api/blogs/, etc.
     # include() delegates the rest of the URL to blog/urls.py

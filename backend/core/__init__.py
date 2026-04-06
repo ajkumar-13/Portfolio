@@ -1,0 +1,1 @@
+"""Core app for shared operational endpoints and cross-cutting concerns."""

@@ -308,10 +308,16 @@ def get_available_provider() -> LLMProvider:
     """
     for provider in ALL_PROVIDERS:
         if provider.is_available():
-            logger.info(f"Using LLM provider: {provider.name}")
+            logger.info(
+                'llm_provider_selected',
+                extra={
+                    'provider': provider.name,
+                },
+            )
             return provider
 
     # Build a helpful error message listing what keys are missing
+    logger.warning('llm_provider_unavailable')
     raise RuntimeError(
         "No LLM providers available. To fix this, do ONE of the following:\n"
         "  • Set ANTHROPIC_API_KEY in backend/.env\n"

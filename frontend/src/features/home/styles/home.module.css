@@ -1,0 +1,691 @@
+.page {
+    position: relative;
+    min-height: calc(100vh - 80px);
+    overflow: hidden;
+    padding: clamp(2rem, 4vw, 3.5rem) 1.5rem 3rem;
+}
+
+.backdrop {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 18% 20%, rgba(255, 150, 82, 0.16), transparent 28%),
+        radial-gradient(circle at 82% 14%, rgba(59, 221, 196, 0.14), transparent 30%),
+        linear-gradient(180deg, rgba(17, 14, 22, 0.15), transparent 35%),
+        linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 60%, var(--bg-primary) 100%);
+    pointer-events: none;
+}
+
+.sunGlow {
+    position: absolute;
+    top: 6rem;
+    right: clamp(1rem, 6vw, 5rem);
+    width: min(26rem, 42vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 131, 79, 0.35), rgba(255, 131, 79, 0) 70%);
+    filter: blur(28px);
+}
+
+.sun {
+    position: absolute;
+    top: 5rem;
+    right: clamp(1.5rem, 7vw, 6rem);
+    width: min(20rem, 34vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+        repeating-linear-gradient(
+            180deg,
+            rgba(255, 220, 180, 0.95) 0,
+            rgba(255, 220, 180, 0.95) 14px,
+            rgba(255, 142, 94, 0.88) 14px,
+            rgba(255, 142, 94, 0.88) 28px
+        );
+    box-shadow: 0 0 80px rgba(255, 142, 94, 0.35);
+    opacity: 0.92;
+}
+
+.grid {
+    position: absolute;
+    left: -15%;
+    right: -15%;
+    bottom: -10%;
+    height: 46%;
+    background:
+        linear-gradient(rgba(70, 255, 234, 0.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(70, 255, 234, 0.45) 1px, transparent 1px);
+    background-size: 52px 52px;
+    transform: perspective(820px) rotateX(78deg);
+    transform-origin: bottom;
+    border-top: 1px solid rgba(70, 255, 234, 0.5);
+    opacity: 0.55;
+    animation: gridDrift 16s linear infinite;
+}
+
+.scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.02) 0,
+        rgba(255, 255, 255, 0.02) 2px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0) 6px
+    );
+    opacity: 0.22;
+}
+
+.hero {
+    position: relative;
+    z-index: 1;
+    max-width: 1220px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: start;
+}
+
+.console {
+    background: linear-gradient(180deg, rgba(18, 19, 28, 0.82), rgba(14, 16, 25, 0.92));
+    border: 1px solid rgba(98, 255, 235, 0.3);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+        0 0 30px rgba(98, 255, 235, 0.1);
+    backdrop-filter: blur(14px);
+}
+
+.consoleBar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.95rem 1.25rem;
+    border-bottom: 1px solid rgba(98, 255, 235, 0.14);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.windowDots {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.windowDot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+}
+
+.windowDot:nth-child(1) {
+    background: #ff8e5e;
+}
+
+.windowDot:nth-child(2) {
+    background: #ffd166;
+}
+
+.windowDot:nth-child(3) {
+    background: #46ffe9;
+}
+
+.windowLabel,
+.windowMode {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.windowLabel {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.windowMode {
+    color: #46ffe9;
+}
+
+.consoleBody {
+    padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.bootLine {
+    font-family: var(--font-mono);
+    color: #46ffe9;
+    font-size: 0.76rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.strap {
+    max-width: 20rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+}
+
+.title {
+    max-width: 12ch;
+    font-family: var(--font-mono);
+    font-size: clamp(3rem, 9vw, 5.9rem);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    color: #fff6dd;
+    text-shadow:
+        0 0 18px rgba(255, 142, 94, 0.28),
+        0 0 34px rgba(70, 255, 233, 0.16);
+    margin-bottom: 1.5rem;
+}
+
+.lead {
+    max-width: 41rem;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 1.06rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.statusRail {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.statusPill {
+    padding: 0.9rem 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(98, 255, 235, 0.14);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.statusPillLabel {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(70, 255, 233, 0.72);
+}
+
+.statusPillValue {
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.55;
+    font-size: 0.9rem;
+}
+
+.signalBox {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(255, 142, 94, 0.28);
+    border-radius: 18px;
+    background: rgba(255, 142, 94, 0.08);
+    margin-bottom: 1.5rem;
+}
+
+.signalLabel {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.signalText {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: #fff6dd;
+}
+
+.cursor {
+    color: #46ffe9;
+    animation: blink 1s steps(1, end) infinite;
+}
+
+.ctaRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-bottom: 1.6rem;
+}
+
+.ghostAction {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(98, 255, 235, 0.24);
+    color: #fff6dd;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.metric {
+    padding: 0.95rem 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.metricValue {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 1.45rem;
+    color: #fff6dd;
+    margin-bottom: 0.2rem;
+}
+
+.metricLabel {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.82rem;
+}
+
+.sidebar {
+    display: grid;
+    gap: 1rem;
+}
+
+.panel {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 0.75rem;
+    border-radius: 24px;
+    border: 1px solid rgba(98, 255, 235, 0.22);
+    background: rgba(15, 17, 26, 0.84);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(14px);
+    padding: 1.3rem;
+}
+
+.panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(70, 255, 233, 0.7), rgba(255, 142, 94, 0));
+}
+
+.panelCool {
+    background: linear-gradient(180deg, rgba(8, 25, 34, 0.92), rgba(15, 17, 26, 0.84));
+}
+
+.panelWarm {
+    background: linear-gradient(180deg, rgba(48, 21, 18, 0.9), rgba(15, 17, 26, 0.84));
+}
+
+.panelLabel {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #46ffe9;
+    margin: 0;
+}
+
+.panelTitle {
+    color: #fff6dd;
+    font-size: 1.12rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.panelBody {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.75;
+    margin: 0;
+}
+
+.trackGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.trackItem {
+    padding: 0.85rem 0.9rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.trackItemLabel {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.trackItemValue {
+    display: block;
+    color: #fff6dd;
+    line-height: 1.45;
+    font-size: 0.88rem;
+}
+
+.stackList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.stackChip {
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.focusList {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.focusItem {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.focusIndex {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid rgba(98, 255, 235, 0.28);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: #46ffe9;
+}
+
+.focusText strong {
+    display: block;
+    color: #fff6dd;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.focusText span {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.86rem;
+    line-height: 1.6;
+}
+
+.operationsGrid {
+    position: relative;
+    z-index: 1;
+    max-width: 1220px;
+    margin: 1.25rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.ledgerList {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.ledgerItem {
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.ledgerEyebrow {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #ffb187;
+}
+
+.ledgerTitle {
+    display: block;
+    color: #fff6dd;
+    margin-bottom: 0.35rem;
+    line-height: 1.4;
+}
+
+.ledgerDetail {
+    display: block;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.principleGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.principleCard {
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid rgba(98, 255, 235, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.principleTitle {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: #fff6dd;
+    line-height: 1.4;
+}
+
+.principleDetail {
+    display: block;
+    color: rgba(255, 255, 255, 0.66);
+    font-size: 0.89rem;
+    line-height: 1.65;
+}
+
+.routeDeck {
+    position: relative;
+    z-index: 1;
+    max-width: 1220px;
+    margin: 1.5rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.routeCard {
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.25rem;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.routeCard:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 142, 94, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.24);
+}
+
+.routeHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.routeOverline {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #46ffe9;
+    margin-bottom: 0.85rem;
+}
+
+.routeState {
+    flex-shrink: 0;
+    padding: 0.28rem 0.58rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.routeName {
+    display: block;
+    font-size: 1.1rem;
+    color: #fff6dd;
+    margin-bottom: 0.45rem;
+}
+
+.routeBody {
+    display: block;
+    color: rgba(255, 255, 255, 0.68);
+    line-height: 1.7;
+    font-size: 0.92rem;
+    min-height: 4.6rem;
+}
+
+.routeMeta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: auto;
+    padding-top: 0.95rem;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.routeArrow {
+    color: #ff8e5e;
+}
+
+.footerNote {
+    position: relative;
+    z-index: 1;
+    max-width: 1220px;
+    margin: 1.25rem auto 0;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes gridDrift {
+    from {
+        background-position: 0 0, 0 0;
+    }
+
+    to {
+        background-position: 0 52px, 52px 0;
+    }
+}
+
+@media (max-width: 980px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .operationsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .principleGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .routeDeck {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .page {
+        padding-inline: 1rem;
+    }
+
+    .consoleBody {
+        padding: 1.25rem;
+    }
+
+    .consoleBar {
+        grid-template-columns: auto 1fr;
+    }
+
+    .windowMode {
+        grid-column: 1 / -1;
+    }
+
+    .statusRail,
+    .trackGrid,
+    .principleGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .sun,
+    .sunGlow {
+        right: -2rem;
+    }
+
+    .title {
+        max-width: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .grid,
+    .cursor,
+    .routeCard,
+    .ghostAction,
+    .console,
+    .panel {
+        animation: none;
+        transition: none;
+    }
+}

@@ -21,6 +21,7 @@ Migrations are Django's version control for your database schema.
 """
 
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 
 class BlogSeries(models.Model):
@@ -151,3 +152,73 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return f"{self.series.title} — {self.title}"
+
+
+class BlogImage(models.Model):
+    """
+    Stores images that can be embedded inside a blog post's Markdown content.
+
+    WHY A SEPARATE MODEL?
+    ─────────────────────────────────────────────────────────────────────────
+    The BlogPost model only has a single 'cover_image' field for the header
+    image. To embed multiple images *inside* the post content (e.g. diagrams,
+    screenshots, architecture figures), we need a separate model that can
+    hold many images per post.
+
+    HOW TO USE IT:
+      1. Open a blog post in Django Admin (/admin/)
+      2. Scroll to the "Post Images" inline section at the bottom
+      3. Upload your image and give it a name
+      4. Copy the URL shown in the "Markdown snippet" column
+      5. Paste it into your post's Markdown content:
+            ![Figure 1: Attention diagram](http://localhost:8000/media/blog_images/diagram.png)
+    ─────────────────────────────────────────────────────────────────────────
+    """
+
+    # Which post this image belongs to.
+    # null=True, blank=True: allows uploading "unattached" images from the
+    # Blog Images list view without needing to pick a post first.
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,   # Delete image record if post is deleted
+        related_name='images',      # Access from post: post.images.all()
+        null=True,
+        blank=True,
+        help_text="Which blog post will this image be used in?"
+    )
+
+    # A short human-readable label so you can find the image again later.
+    name = models.CharField(
+        max_length=150,
+        help_text="Short label for this image, e.g. 'Attention mechanism diagram'"
+    )
+
+    # The actual image file.
+    # upload_to='blog_images/' → saved to MEDIA_ROOT/blog_images/filename.png
+    # Django automatically makes it available at /media/blog_images/filename.png
+    #
+    # WHY FileField instead of ImageField?
+    # ImageField uses Pillow to validate the upload — Pillow only handles raster
+    # formats (PNG, JPEG, GIF, WebP). It rejects SVG files with "not a valid image"
+    # because SVG is an XML text format (vector), not a raster bitmap.
+    # FileField skips Pillow validation entirely, so we add FileExtensionValidator
+    # ourselves to whitelist only the extensions we actually want to allow.
+    # This lets SVG diagrams (common in technical blog posts) work alongside
+    # regular raster images.
+    image = models.FileField(
+        upload_to='blog_images/',
+        validators=[FileExtensionValidator(
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']
+        )],
+        help_text="Upload your image file (PNG, JPG, GIF, WebP, SVG)"
+    )
+
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-uploaded_at']
+        verbose_name = 'Blog Image'
+        verbose_name_plural = 'Blog Images'
+
+    def __str__(self):
+        return self.name
